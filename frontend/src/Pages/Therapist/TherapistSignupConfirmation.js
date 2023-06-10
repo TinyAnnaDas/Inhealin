@@ -54,7 +54,7 @@ const TherapistSignupConfirmation = ({prevStep, nextStep, handleChange, resumeFi
           })
           .then((response)=>{
             console.log(response)
-            // nextPage(e)
+            nextPage(e)
           })
           .catch((error)=>console.log(error))
 

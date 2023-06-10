@@ -51,7 +51,7 @@ const SignupSuccess = ({details}) => {
                                               
                                             
                                               
-                                              <p className='text-center p-3'>An email will be sent to you to inform you about the status of your application.</p>
+                                              <p className='text-center p-3'>Please check your email to know the status of your application.</p>
                                          
                                             </div>
                                         </div>

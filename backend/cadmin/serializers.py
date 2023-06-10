@@ -9,10 +9,7 @@ from client.models import ClientAdditionalDetails
 
 from client.models import Subscriptions
 
-class ClientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Client
-        fields = ("name", "email", "phone")
+
 
 
 class AdminUserCreateSerializer(serializers.ModelSerializer):

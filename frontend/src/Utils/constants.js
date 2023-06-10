@@ -3,6 +3,7 @@ export const register = "api/client/register"
 export const login = "api/token/";
 
 export const allClients = "admin/all-clients";
+export const allTherapists = "admin/all-therapists";
 
 export const allPricingPlans = "/pricing-and-plans";
 
@@ -19,4 +20,6 @@ export const retrieveChat = "/retrieve-chat/"
 export const retrievePreSignedUrl = "api/therapist/pre-signed-url/"
 
 export const registerTherapist = "api/therapist/register-therapist/"
+
+
 

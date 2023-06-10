@@ -3,7 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from .serializers import ClientSerializer, AdminUserCreateSerializer, SubsriptionSerializer, CreateSubscriptionSerializer, CreateClientAdditionalDetails, ChatSerializer
+from .serializers import AdminUserCreateSerializer, SubsriptionSerializer, CreateSubscriptionSerializer, CreateClientAdditionalDetails, ChatSerializer
+from client.serializers import ClientSerializer
+from therapist.serializers import TherapistSerializer
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -74,6 +76,19 @@ class SubscriptionDetails(APIView):
 
 # data=request.data - This line extracts the data from the request object. 
 # In DRF, this is a dictionary-like object containing the request payload data.
+
+
+class TherapistsDetailsView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+    def get(self, request):
+        therapist = User.objects.exclude(Q(is_superuser=True) | Q(type='CLIENT'))
+     
+        therapist = TherapistSerializer(therapist, many=True)
+
+        return Response(therapist.data, status = status.HTTP_200_OK)
+
+
+
 
 
 

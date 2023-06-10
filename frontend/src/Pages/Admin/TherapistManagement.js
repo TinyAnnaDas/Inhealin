@@ -6,6 +6,7 @@ import TvIcon from '@mui/icons-material/Tv';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import SubscriptionsOutlinedIcon from '@mui/icons-material/SubscriptionsOutlined';
 import DNavbar from '../../Components/Navbar/DNavbar';
+import TherapistsTable from '../../Components/DatatablesAdmin/TherapistsTable';
 
 
 const TherapistManagement = () => {
@@ -64,7 +65,7 @@ const TherapistManagement = () => {
             <div className="px-4 md:px-10 mx-auto w-full">
               <div className=" w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
 
-              {/* <UserTable/> */}
+              <TherapistsTable/>
           
               </div>
             </div>

@@ -19,7 +19,7 @@ class RetrievePreSignedUrlView(APIView):
 
 class RegisterTherapistView(APIView):
     def post(self, request):
-        print(request.data)
+        # print(request.data)
         name = request.data['name'] 
        
         email = request.data['email'] 
@@ -54,29 +54,29 @@ class RegisterTherapistView(APIView):
                 fluency_data.append(value)
         #  print(fluency_data)
 
-        # additional_details = {
-        #     'therapist':therapist.id,
-        #     'age':request.data['age'], 
-        #     'gender': request.data['gender'],
-        #     'qualification': request.data['qualification'],
-        #     'experience': request.data['experience'],
-        #     'hoursPerWeek': request.data['hoursPerWeek'],
-        #     'experience': request.data['experience'],
-        #     'specialization': specializations,
-        #     'technique': techniques,
-        #     'describeYourSelf': request.data['describeYourSelf'],
-        #     "fluency":fluency_data,
-        #     'videoCallInfrastructure': request.data['videoCallInfrastructure'],
-        #     'chat2to3TimesADay': request.data['chat2to3TimesADay'],
-        #     'sessionPreferredTime': request.data['sessionPreferredTime'],
-        #     'resume': request.data['resume'] 
+        additional_details = {
+            'therapist':therapist.id,
+            'age':request.data['age'], 
+            'gender': request.data['gender'],
+            'qualification': request.data['qualification'],
+            'experience': request.data['experience'],
+            'hoursPerWeek': request.data['hoursPerWeek'],
+            'experience': request.data['experience'],
+            'specialization': specializations,
+            'technique': techniques,
+            'describeYourSelf': request.data['describeYourSelf'],
+            "fluency":fluency_data,
+            'videoCallInfrastructure': request.data['videoCallInfrastructure'],
+            'chat2to3TimesADay': request.data['chat2to3TimesADay'],
+            'sessionPreferredTime': request.data['sessionPreferredTime'],
+            'resume': request.data['resume'] 
 
-        # }
-        # serializer = TherapistAdditionalDetailsSerializer(data=additional_details)
-        # if not serializer.is_valid():
-        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        }
+        serializer = TherapistAdditionalDetailsSerializer(data=additional_details)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        # serializer.save()
+        serializer.save()
         
 
         

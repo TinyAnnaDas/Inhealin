@@ -1,4 +1,4 @@
-import React from 'react'
+ import React from 'react'
 import Sidebar from '../../Components/Sidebar/Sidebar'
 import UserTable from '../../Components/DatatablesAdmin/UserTable'
 

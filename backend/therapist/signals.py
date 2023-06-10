@@ -14,8 +14,7 @@ def therapist_created(sender, instance, created, **kwargs):
         send_mail(
             "Application to Inhealin successfully submitted",
             message, 
-            settings.ema
-
-
+            'settings.EMAIL_HOST_USER',
+            [instance.email]
         )
 
