@@ -6,16 +6,6 @@ import secrets
 from django.conf import settings
 
 
-# AWS_ACCESS_KEY_ID = 'AKIA4I4OCD5QAHFP3WMO'
-# AWS_SECRET_ACCESS_KEY = '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'
-# AWS_STORAGE_BUCKET_NAME = 'inhealin-therapist-resumes'
-# AWS_S3_SIGNATURE_VERSION = 's3v4'
-# AWS_S3_REGION_NAME = 'ap-northeast-1'
-# AWS_S3_FILE_OVERWRITE = False
-# AWS_DEFAULT_ACL = None
-# AWS_S3_VERIFY = True
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' 
-
 
 AWS_ACCESS_KEY_ID = settings.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
