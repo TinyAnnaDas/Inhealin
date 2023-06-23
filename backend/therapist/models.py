@@ -59,3 +59,17 @@ class TherapistAdditionalDetails(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
    
+class TherapistAvailability(models.Model):
+    therapist = models.ForeignKey('Therapist', on_delete=models.SET_NULL, null=True, blank=True)
+    date_time = models.DateTimeField()
+
+    @property
+    def date(self):
+        return self.date_time.date()
+
+    @property
+    def time(self):
+        return self.date_time.time()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  

@@ -2,12 +2,126 @@ from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from .serializers import CreateClientSerializer,ClientSerializer, MoodJournalSerializer
+from .serializers import CreateClientSerializer,ClientSerializer, MoodJournalSerializer, TherapySessionsSerializer
+from rest_framework.generics import GenericAPIView
 # Client = get_user_model()
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+
 
 from cadmin.serializers import SubsriptionSerializer
 from cadmin.models import SubscriptionPlans
-from .models import ClientAdditionalDetails, MoodJournal
+from therapist.models import Therapist
+from .models import ClientAdditionalDetails, MoodJournal, TherapySessions
+from django.db.models import Q
+
+from therapist.serializers import TherapistSerializer
+
+class RetrieveUpcomingSubscriptionClient(APIView):
+     permission_classes = [permissions.IsAuthenticated]
+     def get(self, request):
+        user = request.user
+        upcoming_therapy_session = TherapySessions.objects.filter(client=user.id).last()
+        if upcoming_therapy_session:
+            session_serializer = TherapySessionsSerializer(upcoming_therapy_session)
+            therapist = upcoming_therapy_session.therapist
+            therapist_serializer = TherapistSerializer(therapist)
+
+            response_data = {
+                'session': session_serializer.data,
+                'therapist': therapist_serializer.data
+            }
+        else:
+            return Response("Message : No Session", status=status.HTTP_200_OK)
+      
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+
+
+class LCTherapySessionAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    queryset = TherapySessions.objects.all()
+    serializer_class = TherapySessionsSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class UpdateTherapySessionAPI(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def put(self, request, id):
+        therapist_id = request.data['therapist']
+        therapy_session = TherapySessions.objects.filter(id=id).first()
+        if therapy_session:
+            therapist = Therapist.objects.get(id=therapist_id)
+            therapy_session.therapist = therapist
+            serializer = TherapySessionsSerializer(therapy_session, data=request.data, partial=True)
+
+        # serializer = TherapySessionsSerializer(therapy_session, data={'therapist': therapist_id}, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({'error': 'Therapy session not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+class DeleteTherapySessionAPI(GenericAPIView, DestroyModelMixin):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = TherapySessions.objects.all()
+    serializer_class = TherapySessionsSerializer
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+   
+
+
+
+
+
+class RTherapySessiosTherapistAPI(APIView):
+    def get(self, request, pk):
+        therapy_sessions = TherapySessions.objects.filter(therapist=pk)
+
+        clients = []
+
+        for therapy_session in therapy_sessions:
+           clients.append(therapy_session.client)
+        
+
+        serializer = ClientSerializer(clients, many=True)
+       
+
+        # print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RTherapySessiosClientAPI(APIView):
+    def get(self, request, pk):
+        therapy_sessions = TherapySessions.objects.filter(client=pk)
+        print(therapy_sessions)
+        
+
+        therapists = []
+        for therapy_session in therapy_sessions:
+           therapists.append(therapy_session.therapist)
+
+        # print(therapists)
+
+        serializer = TherapistSerializer(therapists, many=True)
+        # print(serializer.data)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 class RegisterClientView(APIView):
     def post(self, request):

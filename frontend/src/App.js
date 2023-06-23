@@ -34,11 +34,16 @@ import TherapistProfile from './Pages/Therapist/ThreapistProfile';
 import TherapistSignup from './Pages/Therapist/TherapistSignup';
 import TherapistManagement from './Pages/Admin/TherapistManagement';
 import ResumePdf from './Components/TherapistSignup/ResumePdf';
+import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import BookASession from './Pages/BookASession';
 
 
 
 
 function App() {
+  const user = useSelector(state=>state.clientAuth.client)
+  const therapist = useSelector(state=>state.therapistAuth.therapist)
   return (
     <BrowserRouter>
      <div >
@@ -47,11 +52,11 @@ function App() {
         <Route path='/how-it-works' element={<HowItWorks/>}/>
         <Route path='/pricing-and-plans' element={<PricingAndPlans/>}/>
         <Route path='/our-therapists' element={<OurTherapists/>}/>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/signup' element={<SingupPage/>}/>
+        <Route path='/login' element= {user ? <Navigate to="/client/dashboard"/>: <LoginPage/>}/>
+        <Route path='/signup' element={user ? <Navigate to="/client/dashboard"/>: <SingupPage/>}/>
         <Route path='/order-summary/:id' element={<OrderSummary/>}></Route>
 
-        <Route path='/therapist-login' element={<LoginPageTherapist/>}></Route>
+        <Route path='/therapist-login' element={therapist? <Navigate to="/therapist/dashboard" /> : <LoginPageTherapist/>}></Route>
         <Route path='/therapist/get-onboard' element={<TherapistHome/>}></Route>
         <Route path='/therapist/get-onboard/questions' element={<TherapistSignup/>}></Route>
         <Route path='/therapist/get-onboard/questions/pdf-review' element={<ResumePdf/>}></Route>
@@ -76,6 +81,8 @@ function App() {
           <Route path='/client/my-chats' element={<ClientChats/>}/>
           <Route path='/client/mood-journal' element={<MoodJournal/>}/>
           <Route path='/client/help-desk' element={<HelpDesk/>}/>
+          <Route path='/our-therapists/book-a-session/:therapistId/:therapistName' element={<BookASession/>}/>
+          <Route path='/our-therapists/change-therapist/:therapistId' element={<OurTherapists/>}/>
           
 
         </Route>

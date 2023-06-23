@@ -60,10 +60,14 @@ INSTALLED_APPS = [
     "django_extensions",
 
     "storages",
+
+   
 ]
 
 
 REST_FRAMEWORK = {
+
+    
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
 
@@ -75,7 +79,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -193,6 +197,8 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Kolkata'
 
+DATETIME_FORMAT = '%m/%d/%Y, %I:%M:%S %p'
+
 USE_I18N = True
 
 USE_TZ = True
@@ -208,7 +214,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DATETIME_FORMAT = '%B %d, %Y %I:%M %p'
+# DATETIME_FORMAT = '%B %d, %Y %I:%M %p'
 
 AUTH_USER_MODEL = "client.User"
 

@@ -33,11 +33,13 @@
 
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { SelectedSubscription } from '../Utils/constants';
+import { retrieveSubscription } from '../Utils/constants';
 
 import axios from "../Utils/axios"
 import { processSubscription } from '../Utils/constants';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 
 // import { useSelector } from 'react-redux';
@@ -61,7 +63,7 @@ export default function OrderSummary() {
   useEffect(()=> {
 
    
-    axios.get(`${SelectedSubscription}${id}`)
+    axios.get(`${retrieveSubscription}${id}/`)
     .then((response)=> {
         // console.log(response);
         setSelectedSubscription(response.data)
@@ -91,16 +93,38 @@ export default function OrderSummary() {
 
 // },[])
 
+// const notify = () =>{
+//     console.log("tiny")
+//     toast.success("You already have a plan purchased. Please schedule the session", {
+//       position: "top-center",
+//       autoClose: 3000,
+//       })
+//   }
+
+  console.log(client.subscription)
+
 
   const processOrder = (id)=>{
 
     const authTokensClient = JSON.parse(localStorage.getItem('authTokensClient'))
     const access = authTokensClient.access;
 
-    // console.log(access)
+    
     // if (client.subscription){
-    //     alert(`Your are already subscribed to plan: ${client.subscription} Navigating to dashbaord...`)
-    //     return  navigate("/client/dashboard");
+
+       
+    //     toast.success("You already have a plan purchased. Please schedule the session. Redirecting to dashboard...", {
+    //         position: "top-center",
+    //         autoClose: 5000,
+    //     })
+          
+    //     return setTimeout(() => {
+    //          navigate("/client/dashboard");
+      
+    //       }, 5000);
+
+    //     // alert(`Your are already subscribed to plan: ${client.subscription} Navigating to dashbaord...`)
+    //     // return  navigate("/client/dashboard");
     
     // } 
    
@@ -241,6 +265,7 @@ export default function OrderSummary() {
                 </div>
             </div>
         </div>
+        <ToastContainer />
     </div>
   )
 }

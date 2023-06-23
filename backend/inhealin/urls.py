@@ -26,7 +26,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 
-from client.models import ClientAdditionalDetails
+from client.models import ClientAdditionalDetails, TherapySessions
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -43,6 +43,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                     pass
             except:
                 pass
+
+      
+        session = TherapySessions.objects.filter(client=user).first()
+        if session:
+            token['therapy_session'] = session.id
+        else: 
+            pass
+        
             
 
         # Add custom claims
@@ -62,7 +70,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 
-from cadmin.views import AllSubscriptionView, SubscriptionDetails, ProcessOrder, RetriveChat
+from cadmin.views import ProcessOrder, RetriveChat, ListSubscriptionAPI, RetrieveSubscription
 from therapist.views import RetrievePreSignedUrlView
 
 
@@ -72,14 +80,15 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    path('pricing-and-plans/', AllSubscriptionView.as_view(), name="all_subscriptions"),
-    path('order-summary/<int:id>/', SubscriptionDetails.as_view() ),
+    
     path("order-summary/process-order/", ProcessOrder.as_view()),
     path("retrieve-chat/<str:group_name>/", RetriveChat.as_view()),
+    path("list-all-subscriptions/", ListSubscriptionAPI.as_view() ),
+    path("retrieve-subscription/<str:pk>/", RetrieveSubscription.as_view() ), 
 
     path('api/therapist/', include('therapist.urls')),
-
     path('api/client/', include('client.urls')),
     path('admin/', include('cadmin.urls')),
+
     path('dj-admin/', admin.site.urls),
 ]

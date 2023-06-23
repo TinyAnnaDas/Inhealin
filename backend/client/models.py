@@ -3,7 +3,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
-# from cadmin.models import SubscriptionPlans
+from cadmin.models import SubscriptionPlans
 
 class UserAccountManager(BaseUserManager):
 
@@ -55,6 +55,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
+    therapy_session = models.ForeignKey('TherapySessions', on_delete=models.SET_NULL, null=True, blank=True)
+ 
 
 
     class Types(models.TextChoices):
@@ -62,8 +64,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         THERAPIST = "THERAPIST", "Therapist"
 
 
+    status = models.CharField(max_length=255, default="pending")
 
     type = models.CharField(_('Type'), max_length=255, choices=Types.choices)
+    
 
 
     USERNAME_FIELD = "email"
@@ -93,13 +97,13 @@ class Client(User):
 
 class ClientAdditionalDetails(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    # subscription = models.ForeignKey(SubscriptionPlans, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription = models.ForeignKey(SubscriptionPlans, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 
 
 class Subscriptions(models.Model):
-    # subscription_plan = models.ForeignKey(SubscriptionPlans, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription_plan = models.ForeignKey(SubscriptionPlans, on_delete=models.SET_NULL, null=True, blank=True)
     client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     payment_id = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -121,6 +125,28 @@ class MoodJournal(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)   
+
+
+class TherapySessions(models.Model):
+    client = models.ForeignKey(
+        'client.Client',
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='therapy_sessions_as_client'
+    )
+
+    therapist = models.ForeignKey(
+        'therapist.Therapist',
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='therapy_sessions_as_therapist'
+    )
+
+    scheduled_time = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 

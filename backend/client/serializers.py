@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Client, MoodJournal
+from .models import Client, MoodJournal, TherapySessions
 
-
+class TherapySessionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TherapySessions
+        fields = '__all__'
 
 class CreateClientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,7 +24,7 @@ class CreateClientSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ("name", "email", "phone")
+        fields = ("id", "name", "email", "phone", "is_active", "image")
 
 from django.conf import settings
 class MoodJournalSerializer(serializers.ModelSerializer):
@@ -31,4 +34,6 @@ class MoodJournalSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoodJournal
         fields = ("id", "journal", "client", "updated_at")
+
+
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import { ToastContainer, toast } from 'react-toastify';
 import SignupConfirmationDetails from '../../Components/TherapistSignup/SignupConfirmationDetails';
 
 import axios from "../../Utils/axios"
@@ -16,6 +17,14 @@ const TherapistSignupConfirmation = ({prevStep, nextStep, handleChange, resumeFi
         e.preventDefault();
         prevStep();
 
+    }
+
+    const notify = () =>{
+      console.log("tiny")
+      toast.info("Please wait while your application is processing...", {
+        position: "top-center",
+        autoClose: 5000,
+        })
     }
 
     const handleTherapistSignup = (e) => {
@@ -46,6 +55,8 @@ const TherapistSignupConfirmation = ({prevStep, nextStep, handleChange, resumeFi
              
             }
           }
+        
+          notify()
 
         axios.post(registerTherapist, body, {
             headers: {
@@ -100,6 +111,7 @@ const TherapistSignupConfirmation = ({prevStep, nextStep, handleChange, resumeFi
             </div>
  
         </div>
+        <ToastContainer autoClose={5000}/>
 
 
     </div>

@@ -1,9 +1,11 @@
 
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from .serializers import AdminUserCreateSerializer, SubsriptionSerializer, CreateSubscriptionSerializer, CreateClientAdditionalDetails, ChatSerializer
+from .serializers import  SubsriptionSerializer, CreateSubscriptionSerializer, CreateClientAdditionalDetails, ChatSerializer
 from client.serializers import ClientSerializer
 from therapist.serializers import TherapistSerializer
 
@@ -14,78 +16,124 @@ from .models import SubscriptionPlans, Group, Chat
 from django.db.models import Q
 
 
-
-class UserDetailsView(APIView):
+class ListClientAPI(GenericAPIView, ListModelMixin):
     permission_classes = [permissions.IsAdminUser]
-    def get(self, request):
-        user = User.objects.exclude(Q(is_superuser=True) | Q(type='THERAPIST'))
+
+    queryset = User.objects.exclude(Q(is_superuser=True) | Q(type='THERAPIST'))
+    serializer_class = ClientSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+
+class RUDClientAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    queryset = User.objects.exclude(Q(is_superuser=True) | Q(type='THERAPIST'))
+    serializer_class = ClientSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+
+
+class ListTherapistAPI(GenericAPIView, ListModelMixin):
+    permission_classes = [permissions.IsAdminUser] # commenting 
+
+    queryset = User.objects.exclude(Q(is_superuser=True) | Q(type='CLIENT')).order_by('created_at')
+    serializer_class = TherapistSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class RUDTherapistAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    # permission_classes = [permissions.IsAdminUser]
+
+    queryset = User.objects.exclude(Q(is_superuser=True) | Q(type='CLIENT'))
+    serializer_class = TherapistSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+
+
+
+class LCSubscriptionAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
+    
+    permission_classes = [permissions.IsAdminUser]
+
+    queryset = SubscriptionPlans.objects.all()
+    serializer_class = SubsriptionSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class ListSubscriptionAPI(GenericAPIView, ListModelMixin): # writing it seperately since, it is needed in the front-end without any permissions
+    queryset = SubscriptionPlans.objects.all().order_by('id')
+    serializer_class = SubsriptionSerializer
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class RUDSubscriptionAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    permission_classes = [permissions.IsAdminUser]
+
+    queryset = SubscriptionPlans.objects.all()
+    serializer_class = SubsriptionSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class RetrieveSubscription(GenericAPIView, RetrieveModelMixin):
+    queryset = SubscriptionPlans.objects.all()
+    serializer_class = SubsriptionSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# class TherapistsDetailsView(APIView):
+#     permission_classes = [permissions.IsAdminUser]
+#     def get(self, request):
+#         therapist = User.objects.exclude(Q(is_superuser=True) | Q(type='CLIENT'))
      
-        user = ClientSerializer(user, many=True)
+#         therapist = TherapistSerializer(therapist, many=True)
 
-        return Response(user.data, status = status.HTTP_200_OK)
-
-class UserCreateView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-    def post(self, request):
-        data = request.data
-
-        serializer = AdminUserCreateSerializer(data=data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-        
-        user = serializer.create(serializer.validated_data)
-        user = ClientSerializer(user)
-
-        return Response(user.data, status = status.HTTP_201_CREATED)
-
-class UserDeleteView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-    def get(self, request, user_id):
-        user = User.objects.get(id = user_id)
-        user.delete()
-        return Response({"message": "success"}, status = status.HTTP_200_OK)
-
-
-class UserUpdateView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-    def post(self, request, user_id):
-        user = User.objects.get(id = user_id)
-        user.first_name = request.data['first_name']
-        user.last_name = request.data['last_name']
-        user.email = request.data['email']
-        user.save()
-        return Response({"message": "success"}, status = status.HTTP_200_OK)
-
-
-class AllSubscriptionView(APIView):
-    def get(self, request):
-
-        subscription = SubscriptionPlans.objects.all()
-        subscription = SubsriptionSerializer(subscription, many=True)
-        # print(subscription)
-
-        return Response(subscription.data, status=status.HTTP_200_OK)
-
-class SubscriptionDetails(APIView):
-    def get(self, request, id):
-        selected_subscription = SubscriptionPlans.objects.get(id=id)
-        selected_subscription = SubsriptionSerializer(selected_subscription)
-
-        return Response(selected_subscription.data, status=status.HTTP_200_OK)
-
-
-# data=request.data - This line extracts the data from the request object. 
-# In DRF, this is a dictionary-like object containing the request payload data.
-
-
-class TherapistsDetailsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-    def get(self, request):
-        therapist = User.objects.exclude(Q(is_superuser=True) | Q(type='CLIENT'))
-     
-        therapist = TherapistSerializer(therapist, many=True)
-
-        return Response(therapist.data, status = status.HTTP_200_OK)
+#         return Response(therapist.data, status = status.HTTP_200_OK)
 
 
 

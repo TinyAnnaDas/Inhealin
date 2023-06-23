@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import axios from "../../Utils/axios"
-import { allPricingPlans } from '../../Utils/constants'
+import { listAllSubscriptions } from '../../Utils/constants'
 import {useNavigate} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { setSubscriptions } from '../../Features/Subscriptions/SubscriptionSlice'
@@ -27,7 +27,7 @@ const PricingPlans = () => {
 
     useEffect(()=> {
 
-        axios.get(allPricingPlans).then((response)=>{
+        axios.get(listAllSubscriptions).then((response)=>{
             // console.log(response.data)
             // setSubscriptions(response.data)
             // console.log(response.data)

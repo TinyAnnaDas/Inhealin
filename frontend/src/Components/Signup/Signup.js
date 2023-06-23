@@ -93,14 +93,13 @@ export default function Signup() {
       })
 
       const notify = () =>{
-        console.log("tiny")
-        toast.success("Signup successful! Please log in.", {
+        // console.log("tiny")
+        toast.success("Signup successful! Please log in...", {
           position: "top-center",
           autoClose: 3000,
           })
       }
       
-       ;
 
       axios.post(register, body, {
         headers: { "Content-Type": "application/json" },

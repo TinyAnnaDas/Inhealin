@@ -4,11 +4,10 @@ from django.contrib.auth import get_user_model
 Client = get_user_model()
 from django.contrib.auth.hashers import make_password
 
-from .models import SubscriptionPlans, Chat 
+from .models import SubscriptionPlans, Chat
 from client.models import ClientAdditionalDetails
 
 from client.models import Subscriptions
-
 
 
 
@@ -60,5 +59,7 @@ class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = '__all__'
+
+
 
 

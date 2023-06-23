@@ -1,99 +1,143 @@
 import axios from '../../Utils/axios';
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 
 import {retrieveChat} from "../../Utils/constants"
+import { RetriveTherapySession } from '../../Utils/constants';
 import { useSelector } from 'react-redux';
 import {v4 as uuidv4} from "uuid"
 // {therapistChat, setTherapistChat, handleTherapistChat,  chatFromServerTherapist, clientChat, setClientChat, handleClientChat, chatFromServerClient}
 
-const Chats = () => {
+const Chats = ({clients, therapists}) => {
+  const wsRef = useRef(null);
+  console.log(therapists)
+
+  const [groupName, setGroupName] = useState("")
+
+  const [chat, setChat] = useState("")
+
+  const [chatFromServer, setChatFromServer] = useState([])
+
+  const [allChats, setAllChats] = useState([])
+
+  const [ws, setWs] = useState(null); 
+
 
   const user = useSelector(state=>state.clientAuth.client)
-
   const therapist = useSelector(state=>state.therapistAuth.therapist)
 
 
-
   const user_id = user&&user.user_id || therapist&&therapist.user_id
+
   
 
-  const  groupName = "test-group"
+  let access
 
-    const ws = useMemo(() => new WebSocket('ws://127.0.0.1:8000/ws/ajwc/' + groupName + '/' + user_id + '/'), []);
+  if (therapist){
 
-    const [chat, setChat] = useState("")
-
-    const [chatFromServer, setChatFromServer] = useState("")
-
-    const [allChats, setAllChats] = useState([])
-
-    const handleChat = ()=> {
-      
-   
-
-      ws.send(JSON.stringify({
-        "msg" : chat
-      }))
-  
-      setChat("")
-  
-    }
-
-    let access
-
-    if (therapist){
-
-      const authTokensTherapist = JSON.parse(localStorage.getItem('authTokensTherapist'))
-        // console.log(authTokensClient)
-      access = authTokensTherapist.access
-
-    }
-      
-    else{
-        const authTokensClient = JSON.parse(localStorage.getItem('authTokensClient'))
+    const authTokensTherapist = JSON.parse(localStorage.getItem('authTokensTherapist'))
       // console.log(authTokensClient)
-        access = authTokensClient.access
+    access = authTokensTherapist.access
 
-    }
+  }
+    
+  else{
+      const authTokensClient = JSON.parse(localStorage.getItem('authTokensClient'))
+    // console.log(authTokensClient)
+      access = authTokensClient.access
 
-   
+  }
 
-    useEffect(()=>{
-       
 
+
+
+
+  useEffect(() => {
+    if (groupName) {
+      console.log(groupName);
+      
       axios.get(`${retrieveChat}${groupName}`,{
         headers:{"Authorization": `Bearer ${access}`}
       })
       .then((response)=>{
         console.log(response.data)
-        setAllChats(response.data)
+        
+        const chatObjectsArray = response.data.map((item) => ({
+          content: item.content,
+          owner: item.owner
+        }));
+        // const chatContentArray = response.data.map((item) => item.content);
+        setAllChats(chatObjectsArray);
        
       })
-   
-      
-  
-      ws.onopen = ()=> {
+      .catch((error)=>console.log(error))
+
+
+      const newWs = new WebSocket('ws://127.0.0.1:8000/ws/ajwc/' + groupName + '/' + user_id + '/');
+
+
+      newWs.onopen = ()=> {
   
         console.log("Web Socket is Connected...")
        
       }
-  
-      ws.onmessage = (event)=> {
+      
+      newWs.onmessage = (event)=> {
         console.log("Message received from server...", event.data)
   
         const data = JSON.parse(event.data)
   
-        console.log(data.message)
+        console.log(data)
         
-        setChatFromServer(data.message)
+        // setAllChats(...allChats, {content: data.message, owner: user_id})
+        setAllChats((prevChats) => [
+          ...prevChats,
+          { content: data.message, owner: data.owner}
+        ]);
         
       }
-  
-      ws.onclose = ()=>{
+
+   
+    
+      newWs.onclose = ()=>{
         console.log("Chat socket closed unexpectedly...")
       }
+
+
+      setWs(newWs);
+
+    }
+  }, [groupName]);
+
+
+
+
+    const handleChat = ()=> {
+
+      if (ws){
+         
+      ws.send(JSON.stringify({
+        "msg" : chat
+      }))
   
-    },[ws, chatFromServer])
+      setChat("")
+
+      }
+     
+  
+    }
+
+
+     
+  useEffect(()=>{
+    console.log(allChats)
+  }, [allChats])
+     
+    
+
+   
+
+
+    
   
 
   // console.log(chatFromServer)
@@ -149,65 +193,52 @@ const Chats = () => {
               <span className="font-bold">Active Conversations</span>
               <span
                 className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
-                >4</span
-              >
+                >4</span>
             </div>
             <div className="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
-              <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-              >
-                <div
-                  className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full"
-                >
-                  H
-                </div>
-                <div className="ml-2 text-sm font-semibold">Henry Boyd</div>
-              </button>
-              <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-              >
-                <div
-                  className="flex items-center justify-center h-8 w-8 bg-gray-200 rounded-full"
-                >
-                  M
-                </div>
-                <div className="ml-2 text-sm font-semibold">Marta Curtis</div>
-                <div
-                  className="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none"
-                >
-                  2
-                </div>
-              </button>
-              <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-              >
-                <div
-                  className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full"
-                >
-                  P
-                </div>
-                <div className="ml-2 text-sm font-semibold">Philip Tucker</div>
-              </button>
-              <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-              >
-                <div
-                  className="flex items-center justify-center h-8 w-8 bg-pink-200 rounded-full"
-                >
-                  C
-                </div>
-                <div className="ml-2 text-sm font-semibold">Christine Reid</div>
-              </button>
-              <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-              >
-                <div
-                  className="flex items-center justify-center h-8 w-8 bg-purple-200 rounded-full"
-                >
-                  J
-                </div>
-                <div className="ml-2 text-sm font-semibold">Jerry Guzman</div>
-              </button>
+              {clients&&clients.map((client, index)=>{
+                return (
+
+                <button key={index} onClick={()=>setGroupName(`${client.id}${user_id}`)}
+                   className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                 >
+                   <div
+                     className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full"
+                   >
+                     H
+                   </div>
+                   <div className="ml-2 text-sm font-semibold">{client.name}</div>
+                </button>
+
+                )
+              })
+                
+              }
+
+
+              {therapists&&therapists.map((therapist, index)=>{
+                return (
+
+                <button key={index} onClick={()=>setGroupName(`${user_id}${therapist.id}`)}
+                   className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                 >
+                   <div
+                     className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full"
+                   >
+                     H
+                   </div>
+                   <div className="ml-2 text-sm font-semibold">{therapist.name}</div>
+                </button>
+
+                )
+              })
+                
+              }
+           
+           
+            
+           
+           
             </div>
             <div className="flex flex-row items-center justify-between text-xs mt-6">
               <span className="font-bold">Archivied</span>
@@ -239,7 +270,7 @@ const Chats = () => {
             <div className="flex flex-col h-full overflow-x-auto mb-4">
               <div className="flex flex-col h-full">
                 <div className="grid grid-cols-12 gap-y-2">
-                  { allChats.map((chat)=> {
+                  { allChats.map((chat, index)=> {
 
                           const isUserOwner = user && chat.owner === user.user_id;
                           const isTherapistOwner = therapist && chat.owner === therapist.user_id;
@@ -247,10 +278,10 @@ const Chats = () => {
                         return(
                           
                 
-                            <React.Fragment key={chat.id}>
+                            <React.Fragment key={index}>
                               {isUserOwner || isTherapistOwner  ? (
 
-                                <div key={`${chat.id}-${user_id}`} className="col-start-6 col-end-13 p-3 rounded-lg">
+                                <div  className="col-start-6 col-end-13 p-3 rounded-lg">
                                     <div className="flex items-center justify-start flex-row-reverse">
                                       <div
                                         className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0"

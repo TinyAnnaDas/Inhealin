@@ -8,6 +8,8 @@
 
 // import Swal from 'sweetalert2';
 import {useSelector} from 'react-redux'
+import DeleteClient from '../ClientManagement/DeleteClient'
+import BlockClient from '../ClientManagement/BlockClient'
 // import {useDispatch} from 'react-redux'
 // import { useNavigate } from 'react-router-dom';
 // import {delete_user} from '../../features/UpdateUserSlice'
@@ -17,53 +19,28 @@ import {useSelector} from 'react-redux'
    function UserTable() {
 
 
-  
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    const [toBeDeleted, setToBeDeleted] = useState("")
+    const [userTableUpdated, setUserTableUpdated] = useState(false)
+
+
+    const [blockOpen, setBlockOpen] = useState(false)
+    const [toBeBlocked, setToBeBlocked] = useState("")
+    // const [clientBlocked, setClientBlocked] = useState(false)
+
+ 
+
+
+
+    // useEffect(()=>{
+    //     console.log(clientBlocked)
+    // },clientBlocked)
+    
 
  
     const [users, setUsers] = useState([])
     const [search, setSearch] = useState("")
     const [filteredUsers, setFilteredUsers] = useState([])
-
-    // const navigate = useNavigate()
-
-    // const [isMounted, setIsMounted] = useState(false);
-    // const dispatch = useDispatch()
-
-    const createdUser = useSelector((state )=> state.updateUser.createdUser)
-    const editedUser = useSelector((state )=> state.updateUser.editedUser)
-    const deletedUser = useSelector((state)=> state.updateUser.deletedUser)
-
-  
-      // const handleDelete = (userId) => {
-      //   Swal.fire({
-      //     title: 'Are you sure?',
-      //     icon: 'warning',
-      //     showCancelButton: true,
-      //     confirmButtonColor: '#3085d6',
-      //     cancelButtonColor: '#d33',
-      //     confirmButtonText: 'Yes',
-      //   })
-      //   .then((result) => {
-      //     if (result.isConfirmed) {
-      //       const authTokens = JSON.parse(localStorage.getItem('authTokens'))
-      //       const access = authTokens.access;
-      //       // const url = `${userDelete}${userId}`
-      //       axios
-      //       .get(url, {
-      //         headers: { "Authorization": `Bearer ${access}`},
-      //       })
-      //       .then((response) => {
-      //         dispatch(delete_user())
-      //       })
-      //       .catch((error) => {
-      //         console.log("error",error);
-      //       });
-
-      //     }
-      //   });
-      // };
-
-
 
     
     const getUsers = async() => {
@@ -76,9 +53,13 @@ import {useSelector} from 'react-redux'
             const response = await axios.get(allClients, {
                 headers: { "Authorization": `Bearer ${access}`}
             })
+
+            // console.log(typeof(response.data[0].is_active))
+            console.log(response.data)
     
             setUsers(response.data)
             setFilteredUsers(response.data)
+            // setClientBlocked(response.data.is_active)
         }
         catch (error){
             console.log(error)
@@ -87,7 +68,7 @@ import {useSelector} from 'react-redux'
 
     useEffect(()=>{
         getUsers()
-    }, [createdUser,editedUser, deletedUser])
+    }, [userTableUpdated])
 
     useEffect(()=>{
         const result = users.filter(user => {
@@ -120,15 +101,40 @@ import {useSelector} from 'react-redux'
     // },
  
     {
-        name: "Block Client",
-        cell: row => <button type="button" class="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300">Block</button>
+        name: "Block",
+        cell: row => <>
+
+        {row.is_active?
+        <button onClick={()=>{
+            setBlockOpen(true)
+            setToBeBlocked(row)
+            }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:ring-orange-300">
+            Block
+        </button>
+            :
+
+        <button onClick={()=>{
+            setBlockOpen(true)
+            setToBeBlocked(row)
+            }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:ring-orange-300">
+            Unblock
+        </button>
+        }
+
+        {toBeBlocked && <BlockClient blockOpen={blockOpen} setBlockOpen={setBlockOpen} toBeBlocked={toBeBlocked} setUserTableUpdated={setUserTableUpdated} userTableUpdated={userTableUpdated} />}
+        </>
     },
  
     {
         name: "Delete",
-        cell: row => <button type="button" class="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-red-400 hover:bg-red-500 focus:red-4 focus:ring-red-300">Delete </button>
+        cell: row =>  <>
+        <button  onClick={()=>{
+            setDeleteOpen(true)
+            setToBeDeleted(row)
+            }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-red-400 hover:bg-red-500 focus:red-4 focus:ring-red-300">Delete </button>
+        {toBeDeleted&& <DeleteClient deleteOpen={deleteOpen} setDeleteOpen={setDeleteOpen} toBeDeleted={toBeDeleted} setUserTableUpdated={setUserTableUpdated} userTableUpdated={userTableUpdated}/>}
+        </>
 
-        // cell: row => <button className='btn btn-danger btn-sm' onClick={()=>handleDelete(row.id)} >Delete the Plan</button>
     },
 
     ]

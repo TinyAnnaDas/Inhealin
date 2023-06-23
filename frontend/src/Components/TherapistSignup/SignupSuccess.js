@@ -1,7 +1,6 @@
 import { Fragment, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
-import SpaIcon from '@mui/icons-material/Spa';
 import DoneIcon from '@mui/icons-material/Done';
 
 const SignupSuccess = ({details}) => {

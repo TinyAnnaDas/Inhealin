@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom"
-// import { ToastContainer, toast } from 'react-toastify';
 import axios from '../../Utils/axios';
 import {login} from '../../Utils/constants'
 import { loginClient } from "../../Features/Client/ClientAuthSlice";
 import {useDispatch} from "react-redux"
 import jwtDecode from 'jwt-decode';
+
+import { ToastContainer, toast } from 'react-toastify';
 
 
 export default function Login() {
@@ -18,6 +19,16 @@ export default function Login() {
         'password': e.target.password.value,
       });
 
+
+      const notify = () =>{
+        // console.log("tiny")
+        toast.success("Login successful! Redirecting to dashbaord...", {
+          position: "top-center",
+          autoClose: 3000,
+          })
+      }
+     
+
       axios
       .post(login, body, {
         headers: { "Content-Type": "application/json" },
@@ -25,12 +36,27 @@ export default function Login() {
       .then((response)=>{
 
         if (response.status === 200){
-          console.log(response.data)
-          localStorage.setItem('authTokensClient', JSON.stringify(response.data))
-          dispatch(loginClient({authTokenClient: JSON.stringify(response.data), client: jwtDecode(response.data.access) }))
-          navigate("/");
+          console.log(response)
+          notify()
+
+            setTimeout(() => {
+              localStorage.setItem('authTokensClient', JSON.stringify(response.data))
+              dispatch(loginClient({authTokenClient: JSON.stringify(response.data), client: jwtDecode(response.data.access) }))
+    
+        
+            }, 3000); 
+            //Here I am not redirecting anywhere because I have set the public route like that logged in user automatically get to see the dashboard
 
         }
+      })
+      .catch((error)=> {
+        console.log(error.response.data.detail)
+        error = error.response.data.detail
+        toast.error(error, {
+          position: "top-center",
+          autoClose: 3000,
+          })
+        
       })
     }
 
@@ -116,6 +142,7 @@ export default function Login() {
             </p>
       
           </div>
+          <ToastContainer autoClose={3000}/>
         </div>
      
       </>

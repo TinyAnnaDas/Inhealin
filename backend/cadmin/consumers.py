@@ -4,6 +4,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import asyncio
 
 from .models import  Group, Chat
+from client.models import TherapySessions
 
 from client.models import User
 
@@ -18,6 +19,8 @@ class MyAsyncJsonWebsocketConsumer(AsyncJsonWebsocketConsumer):
         print("Channel Name... ", self.channel_name)
 
         self.group_name = self.scope['url_route']['kwargs']['group_name']
+
+        # self.group_name = TherapySessions.objects.get()
         self.user_id = self.scope['url_route']['kwargs']['user_id']
 
         # print(self.user_id)
@@ -50,12 +53,14 @@ class MyAsyncJsonWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         await database_sync_to_async(chat.save)()
+        print("The girl who fell in love... ", content['msg'])
 
         await self.channel_layer.group_send(
             self.group_name,
             {
                 'type': 'chat.message',
-                'message': content["msg"]
+                'message': content["msg"],
+                'owner': user.id
             }
         )
     
@@ -63,7 +68,8 @@ class MyAsyncJsonWebsocketConsumer(AsyncJsonWebsocketConsumer):
         print("Event...", event)
 
         await self.send_json({
-            'message':event['message']
+            'message':event['message'], 
+            'owner': event['owner']
         })
 
    

@@ -35,6 +35,7 @@ const TherapistLogin = () => {
               }
             
         })
+        .catch((error)=>console.log(error))
 
        
     }

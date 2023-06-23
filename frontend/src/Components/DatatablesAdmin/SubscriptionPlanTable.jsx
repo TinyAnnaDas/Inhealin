@@ -1,18 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import axios from "../../Utils/axios"
 import DataTable from 'react-data-table-component'
-import { allPricingPlans } from '../../Utils/constants'
+import { ListCreateSubscriptionPlans } from '../../Utils/constants'
+import CreateSubscription from '../SubscriptionManagement/CreateSubscription'
+import EditSubscription from '../SubscriptionManagement/EditSubscription'
+import DeleteSubscription from '../SubscriptionManagement/DeleteSubscription'
 
 
 
 const SubscriptionPlanTable = () => {
 
+    const [open, setOpen] = useState(false)
+    const [editOpen, setEditOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
+
+    const [toBeEdited, setToBeEdited] = useState("")
+    const [toBeDeleted, setToBeDeleted] = useState("")
+
+
+     useEffect(()=> {
+        console.log(toBeEdited)
+    },[toBeEdited])
+
+    
+    const [subscriptionUpdated, setSubscriptionUpdated] = useState(false)
+    // const [subscriptionEdited, setSubscriptionEdited] = useState(false)
+
+    
+
+
     const [subscriptions, setSubscriptions] = useState([])
     const [search, setSearch] = useState("")
     const [filteredSubscriptions, setFilteredSubscriptions] = useState([])
 
+
+    const authTokensAdmin = JSON.parse(localStorage.getItem('authTokensAdmin'))
+    const access = authTokensAdmin?.access;
+
+
     useEffect(()=>{
-        axios.get(allPricingPlans)
+        axios.get(ListCreateSubscriptionPlans, {
+            headers: { "Authorization": `Bearer ${access}`}
+        })
         .then((response)=>{
             console.log(response.data)
             setSubscriptions(response.data)
@@ -20,7 +49,7 @@ const SubscriptionPlanTable = () => {
         })
         .catch((error)=>console.log(error))
 
-    }, [allPricingPlans])
+    }, [subscriptionUpdated])
 
 
 
@@ -51,16 +80,33 @@ const SubscriptionPlanTable = () => {
     },
     {
         name: "Price",
-        selector: row=>row.price
+        selector: row=>row.price,
+        sortable:true,
+        sortField: "rice"
+        
     },
     {
         name: "Edit",
-        cell: row => <button type="button" class="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-gray-400 hover:bg-gray-500 focus:ring-4 focus:ring-gray-300">Edit the plan</button>
+        cell: row => <>
+            <button  onClick={()=>{
+                setEditOpen(true) 
+                setToBeEdited(row)}} 
+                    type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-gray-400 hover:bg-gray-500 focus:ring-4 focus:ring-gray-300">Edit the plan</button>
+                {toBeEdited&& <EditSubscription editOpen={editOpen} setEditOpen={setEditOpen} toBeEdited={toBeEdited} setSubscriptionUpdated={setSubscriptionUpdated} subscriptionUpdated={subscriptionUpdated}/>}
+        </>
+        
     },
  
     {
         name: "Delete",
-        cell: row => <button type="button" class="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-red-400 hover:bg-red-500 focus:red-4 focus:ring-red-300">Delete </button>
+        cell: row => 
+        <>
+        <button  onClick={()=>{
+            setDeleteOpen(true)
+            setToBeDeleted(row)
+            }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-red-400 hover:bg-red-500 focus:red-4 focus:ring-red-300">Delete </button>
+        {toBeDeleted&& <DeleteSubscription deleteOpen={deleteOpen} setDeleteOpen={setDeleteOpen} toBeDeleted={toBeDeleted} setSubscriptionUpdated={setSubscriptionUpdated} subscriptionUpdated={subscriptionUpdated}/>}
+        </>
 
         // cell: row => <button className='btn btn-danger btn-sm' onClick={()=>handleDelete(row.id)} >Delete the Plan</button>
     },
@@ -71,9 +117,10 @@ const SubscriptionPlanTable = () => {
         
     }
 
-    const CustomTitle = () => <h5 className='justify-center'   >Subscription Plans</h5>;
+    const CustomTitle = () => <h5 style={{ textAlign: "right"}}  >Subscription Plans</h5>;
 
   return (
+    <>
     <DataTable 
     title = {<CustomTitle/>}
     columns={columns}
@@ -83,6 +130,16 @@ const SubscriptionPlanTable = () => {
     selectableRows
     selectableRowsHighlight
     highlightOnHover
+
+    defaultSortField={filteredSubscriptions.price}
+    defaultSortAsc={true}
+
+    actions={
+        <>
+        <button onClick={()=>setOpen(true)}  type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-green-400 hover:bg-green-500 focus:red-4 focus:ring-green-300">+ Add Subscription </button>
+        <CreateSubscription open={open} setOpen={setOpen} setSubscriptionUpdated={setSubscriptionUpdated} subscriptionUpdated={subscriptionUpdated}/>
+        </>
+      }
 
 
     subHeader
@@ -99,6 +156,8 @@ const SubscriptionPlanTable = () => {
     }
    
     />
+
+    </>
   )
 }
 

@@ -10,6 +10,10 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import EventIcon from '@mui/icons-material/Event';
 import Chats from '../../Components/Chats/Chats';
+import { useSelector } from 'react-redux';
+import axios from '../../Utils/axios';
+import { RetriveTherapySessionTherapist } from '../../Utils/constants';
+import {retrieveChat} from "../../Utils/constants"
 
 
 
@@ -17,62 +21,58 @@ import Chats from '../../Components/Chats/Chats';
 
 function TherapistChats() {
 
-  // const therapist = new WebSocket('ws://127.0.0.1:8000/ws/ac/')
 
-//   const  groupName = "test-group"
-//  const therapist = useMemo(() => new WebSocket('ws://127.0.0.1:8000/ws/ajwc/' + groupName+'/'), []);
+  const user = useSelector(state=>state.clientAuth.client)
 
-//   const [therapistChat, setTherapistChat] = useState("")
+  const therapist = useSelector(state=>state.therapistAuth.therapist)
 
-//   const [chatFromServerTherapist, setChatFromServerTherapist] = useState("")
+  const  [clients, setClients] = useState([])
 
 
-//   const handleTherapistChat = ()=> {
-   
+  const user_id = user&&user.user_id || therapist&&therapist.user_id
 
-//     therapist.send(JSON.stringify({
-//       "msg" : therapistChat
-//     }))
+  // console.log(user_id)s
 
-//     setTherapistChat("")
+  const authTokensTherapist = JSON.parse(localStorage.getItem('authTokensTherapist'))
+  // console.log(authTokensClient)
+  const access = authTokensTherapist.access
 
-//   }
+  useEffect(() => {
+    const url=`${RetriveTherapySessionTherapist}${user_id}/`
+    // console.log(url)
+    axios.get(url, {
+      headers: { "Authorization": `Bearer ${access}` }
+    })
+      .then((response) => {
+        // console.log(response.data) s
+        setClients(response.data)
+      })
+      .catch((error) => console.log(error))
+  }, [RetriveTherapySessionTherapist, user_id, access]);
 
 
-  
+
+
   // useEffect(()=>{
-   
-  //   // console.log(chat)
+  //   console.log(allChats)
+  // },[allChats])
 
-  //   therapist.onopen = ()=> {
 
-  //     console.log("Web Socket is Connected...")
-  //     // therapist.send("Hi from therapist")
+  // useEffect(() => {
+  //   if (groupName) {
+  //     console.log(groupName)
+  //     axios.get(`${retrieveChat}${groupName}`, {
+  //       headers: { "Authorization": `Bearer ${access}` }
+  //     })
+  //       .then((response) => {
+  //         console.log(response.data)
+  //         setAllChats(response.data)
+  //       })
+  //       .catch((error) => console.log(error))
   //   }
+  // }, [groupName, retrieveChat, access]);
 
-  //   therapist.onmessage = (event)=> {
-  //     console.log("Message received from server...", event.data)
 
-  //     const data = JSON.parse(event.data)
-
-  //     console.log(data.message)
-  //     // const data = JSON.parse(event.data) //String to JS object.
-  //     // document.querySelector('#chat-log').value += (data.msg + '\n')
-  //     setChatFromServerTherapist(data.message)
-      
-  //   }
-
-  //   therapist.onclose = ()=>{
-  //     console.log("Chat socket closed unexpectedly...")
-  //   }
-
-  //   // return () => {
-  //   //   therapist.close();
-  //   // };
-
-    
-
-  // },[therapist])
 
     
     const therapistDashboard = true
@@ -120,8 +120,7 @@ function TherapistChats() {
             <DNavbar therapistDashboard={therapistDashboard}/>
             {/* handleTherapistChat={handleTherapistChat} setTherapistChat={setTherapistChat} therapistChat={therapistChat} chatFromServerTherapist={chatFromServerTherapist} */}
             
-            <Chats />
-
+            {clients&&<Chats clients={clients}/>}
         </div>
     </div>
   )

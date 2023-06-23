@@ -11,64 +11,45 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import Chats from '../../Components/Chats/Chats';
+import { useSelector } from 'react-redux';
+import { RetriveTherapySessionClient } from '../../Utils/constants';
+import axios from '../../Utils/axios';
+import NoPlanChat from '../../Components/Chats/NoPlanChat';
 
 
 
 const ClientChats = () => {
 
-    // const  groupName = "test-group"
+  const user = useSelector(state=>state.clientAuth.client)
+  const therapist = useSelector(state=>state.therapistAuth.therapist)
+  const  [therapists, setTherapists] = useState([])
 
-    // const client = useMemo(() => new WebSocket('ws://127.0.0.1:8000/ws/ajwc/' + groupName+'/'), []);
+  const user_id = user&&user.user_id || therapist&&therapist.user_id
 
-    // const [clientChat, setClientChat] = useState("")
+  const authTokensClient = JSON.parse(localStorage.getItem('authTokensClient'))
+  // console.log(authTokensClient)
+  const access = authTokensClient.access
 
-    // const [chatFromServerClient, setChatFromServerClient] = useState("")
+  // console.log(user_id)
 
-    // const handleClientChat = ()=> {
+  useEffect(()=>{
+    const url = `${RetriveTherapySessionClient}${user_id}/`
+    console.log(url)
+    axios.get(url, {
+      headers:{"Authorization": `Bearer ${access}`}
+    })
+    .then((response)=>{
+      console.log(response.data)
+      setTherapists(response.data)
+
+    })
+    .catch((error)=>console.log(error))
+
+  },[RetriveTherapySessionClient])
+
+
    
-
-    //   client.send(JSON.stringify({
-    //     "msg" : clientChat
-    //   }))
   
-    //   setClientChat("")
-  
-    // }
-
-
-    // useEffect(()=>{
-   
-    //   // console.log(chat)
-  
-    //   client.onopen = ()=> {
-  
-    //     console.log("Web Socket is Connected...")
-    //     // therapist.send("Hi from therapist")
-    //   }
-  
-    //   client.onmessage = (event)=> {
-    //     console.log("Message received from server...", event.data)
-  
-    //     const data = JSON.parse(event.data)
-  
-    //     console.log(data.message)
-    //     // const data = JSON.parse(event.data) //String to JS object.
-    //     // document.querySelector('#chat-log').value += (data.msg + '\n')
-    //     setChatFromServerClient(data.message)
-        
-    //   }
-  
-    //   client.onclose = ()=>{
-    //     console.log("Chat socket closed unexpectedly...")
-    //   }
-  
-    //   // return () => {
-    //   //   therapist.close();
-    //   // };
-  
-      
-  
-    // },[client])
   
 
 
@@ -114,7 +95,7 @@ const ClientChats = () => {
             <DNavbar clientDashboard={clientDashboard}/>
             {/* handleClientChat={handleClientChat} setClientChat={setClientChat} clientChat={clientChat} chatFromServerClient={chatFromServerClient} */}
          
-            <Chats/> 
+            {therapists?<Chats therapists={therapists}/>:<NoPlanChat/>}
         </div>
     </div>
   )
