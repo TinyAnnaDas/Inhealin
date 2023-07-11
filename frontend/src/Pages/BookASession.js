@@ -9,7 +9,7 @@ import axios from "../Utils/axios"
 import { ToastContainer, toast } from 'react-toastify';
 
 import { ListCreateTherapySession, retrieveTherapistAdditionalDetails, UpdateTherapySession, RetrieveUpcomingTherapySessionClient} from '../Utils/constants'
-
+import {format} from 'date-fns'
 
 
 const BookASession = () => {
@@ -22,6 +22,7 @@ const BookASession = () => {
 
     const [therapistDetails, setTherapistDetails] = useState([])
     const [sessionData, setSessionData] = useState("")
+    let [availability, setAvailability] = useState("")
 
     const client = useSelector(state=>state.clientAuth.client)
     console.log(client.therapy_session)
@@ -54,8 +55,35 @@ const BookASession = () => {
     useEffect(()=>{
         axios.get(`${retrieveTherapistAdditionalDetails}${therapistId}`)
         .then((response)=>{
-            // console.log(response)
-            setTherapistDetails(response.data)
+            console.log(response)
+            setTherapistDetails(response.data.additional_details)
+
+            if (response.data.availability){
+              const dateTimeString = response.data.availability;
+              const dateTime = new Date(dateTimeString);
+
+              const options = {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+              };
+            
+              const formattedDateTime = dateTime.toLocaleString("en-US", options);
+              console.log(formattedDateTime)
+
+               setAvailability(formattedDateTime)
+            }
+
+           
+
+
+
+            // const formattedAvailableDay = format(response.data.availability, 'yyyy-MM-dd')
+            // console.log(formattedAvailableDay)
+            
         })
         .catch((error)=>console.log(error))
 
@@ -84,12 +112,27 @@ const BookASession = () => {
         // console.log(client.user_id)
         // console.log(therapistId)
 
+        const dateString = availability
+        const inputDate = new Date(dateString);
+
+        const year = inputDate.getFullYear().toString().padStart(4, '0');
+        const month = (inputDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = inputDate.getDate().toString().padStart(2, '0');
+        const hours = inputDate.getHours().toString().padStart(2, '0');
+        const minutes = inputDate.getMinutes().toString().padStart(2, '0');
+        const seconds = inputDate.getSeconds().toString().padStart(2, '0');
+        const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+        console.log(formattedDateString)
+
+
 
         if (sessionData){
 
           const body = new FormData()
           body.append('therapist', therapistId)
-
+          body.append('scheduled_time', formattedDateString)
+          
           const sessionId = sessionData.id
           axios.put(`${UpdateTherapySession}${sessionId}/`, body, {
             headers: { 
@@ -112,6 +155,8 @@ const BookASession = () => {
           const body = new FormData()
           body.append('therapist',  therapistId)
           body.append('client', client.user_id)
+          body.append('scheduled_time', formattedDateString)
+          
 
           axios.post(ListCreateTherapySession, body, {
             headers: { 
@@ -175,7 +220,7 @@ const BookASession = () => {
                                 <p className="text-base font-normal text-gray-500 dark:text-gray-400"><span className='font-bold'>Specialization</span> {therapistDetails.specialization}</p>
                                 <p className="text-base font-normal text-gray-500 dark:text-gray-400"><span className='font-bold'>Languages Spoken</span> {therapistDetails.fluency}</p>
                                 <p className="text-base font-normal text-gray-500 dark:text-gray-400"><span className='font-bold'>Therapeutic Expertise</span> {therapistDetails.technique}</p>
-                                <p className="text-base font-normal text-gray-500 dark:text-gray-400"><span className='font-bold'>Next Available at </span>{therapistDetails.sessionPreferredTime}</p>
+                                <p className="text-base font-normal text-gray-500 dark:text-gray-400"><span className='font-bold'>Next Available at </span>{availability}</p>
                                 <div className='flex justify-center mt-5'>
                                 <a onClick={()=>handleBookASession()} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  cursor-pointer">Confirm your session</a>
 

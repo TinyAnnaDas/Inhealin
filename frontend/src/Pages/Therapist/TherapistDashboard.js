@@ -12,6 +12,7 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import EventIcon from '@mui/icons-material/Event';
 import WelcomeBlock from '../../Components/Headers/WelcomeBlock';
+import UpcomingSessionsOverview from '../../Components/UpcomingSessionsOverview/UpcomingSessionsOverview';
 
 
 
@@ -60,6 +61,8 @@ const TherapistDashboard = () => {
     <div className="relative md:ml-64 bg-lightBlue-600 Gray-100">
       <DNavbar therapistDashboard={therapistDashboard}/>
       <WelcomeBlock/>
+      <UpcomingSessionsOverview/>
+
       
     </div>
   </div>

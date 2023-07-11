@@ -10,6 +10,7 @@ import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import EventIcon from '@mui/icons-material/Event';
+import TherapistProfileDetails from '../../Components/TherapistProfileDetails/TherapistProfileDetails';
 
 const TherapistProfile = () => {
 
@@ -57,10 +58,16 @@ const TherapistProfile = () => {
             <DNavbar therapistDashboard={therapistDashboard}/>
             <div className="relative bg-lightBlue-600 md:pt-28 pb-10 pt-12">
                 <div className="px-4 md:px-10 mx-auto w-full">
-                    <div className=" w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                            Threapist Profile
-                    </div>
+                    <TherapistProfileDetails/>
+                    
                 </div>
+            </div>
+
+            
+            <div className="flex flex-wrap">
+              <div className="w-full px-4">
+              
+              </div>
             </div>
 
 

@@ -10,7 +10,7 @@ from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveMode
 
 from cadmin.serializers import SubsriptionSerializer
 from cadmin.models import SubscriptionPlans
-from therapist.models import Therapist
+from therapist.models import Therapist, TherapistAvailability
 from .models import ClientAdditionalDetails, MoodJournal, TherapySessions
 from django.db.models import Q
 
@@ -50,6 +50,11 @@ class LCTherapySessionAPI(GenericAPIView, ListModelMixin, CreateModelMixin):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        scheduled_time = request.data.get('scheduled_time')
+        print(scheduled_time)
+        availability = TherapistAvailability.objects.filter(date_time=scheduled_time).first()
+        availability.session_booked = True
+        availability.save()
         return self.create(request, *args, **kwargs)
 
 class UpdateTherapySessionAPI(APIView):
@@ -80,6 +85,7 @@ class DeleteTherapySessionAPI(GenericAPIView, DestroyModelMixin):
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
    
 
 
@@ -162,7 +168,7 @@ class RetrieveSubscriptionDetails(APIView):
         
         if client_additional_details.subscription is not None:
             subscription = client_additional_details.subscription
-            # print(subscription)
+            print(subscription)
         else:
             return Response("", status=status.HTTP_200_OK)
 

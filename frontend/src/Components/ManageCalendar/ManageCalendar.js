@@ -151,6 +151,7 @@ const ManageCalendar = () => {
 
             const dateTimeString = response.data.date_time;
             
+            
             const dateTime = new Date(dateTimeString);
 
             const options = {
@@ -174,7 +175,7 @@ const ManageCalendar = () => {
 
     useEffect(() => {
         const formattedSelectedDay = format(selectedDay, 'yyyy-MM-dd')
-        console.log(formattedSelectedDay)
+        // console.log(formattedSelectedDay)
         axios.get(`${retrieveTherapistAvailability}${formattedSelectedDay}/`, {
             headers: { 
                 "Authorization": `Bearer ${access}`,
@@ -182,7 +183,7 @@ const ManageCalendar = () => {
             }
         })
         .then((response)=>{
-            console.log(response.data.date_time)
+            console.log(response.data)
 
             if (response.data.date_time){
                 const dateTimeString = response.data.date_time;
@@ -198,7 +199,7 @@ const ManageCalendar = () => {
                 };
               
                 const formattedDateTime = dateTime.toLocaleString("en-US", options);
-                console.log(formattedDateTime)
+                // console.log(formattedDateTime)
         
                 setDateTime(formattedDateTime)
                 setAvailableForTherapy(true)
@@ -218,10 +219,10 @@ const ManageCalendar = () => {
     },[selectedDay])
 
 
-    useEffect(()=> {
-        console.log(dateTime)
+    // useEffect(()=> {
+    //     console.log(dateTime)
 
-    }, [dateTime])
+    // }, [dateTime])
 
   return (
     <div className="relative bg-lightBlue-600  ">
@@ -326,14 +327,14 @@ const ManageCalendar = () => {
                                 </h2>
                                 
                                 {/* <p className="text-gray-900 py-2 px-4">Available for theapy ?</p> */}
-                                <div class="flex items-center   py-5 px-4">
-                                    <input onChange={(e)=>setAvailableForTherapy(e.target.checked)} type="checkbox" checked={availableForThreapy} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500  "/>
-                                    <label for="default-checkbox" class="ml-2  text-sm font-medium text-gray-900 ">Available for therapy?</label>
+                                <div className="flex items-center   py-5 px-4">
+                                    <input onChange={(e)=>setAvailableForTherapy(e.target.checked)} type="checkbox" checked={availableForThreapy} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500  "/>
+                                    <label htmlFor="default-checkbox" className="ml-2  text-sm font-medium text-gray-900 ">Available for therapy?</label>
                                 </div>
                                 {availableForThreapy && 
 
                                     <div className=" flex flex-col items-start mb-4  px-4">
-                                                                    
+                                                                
                                     <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 ">Choose your time</label>
                                     <select value={dateTime} onChange={(e)=>handleChange(e)}  id="countries" className="shadow border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-inset  focus:ring-[#9bd58b] block w-full p-1.5 ">
 

@@ -107,7 +107,7 @@ class Subscriptions(models.Model):
     client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     payment_id = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+   
     def __str__(self):
         return self.subscription_plan
 
@@ -128,6 +128,8 @@ class MoodJournal(models.Model):
 
 
 class TherapySessions(models.Model):
+   
+
     client = models.ForeignKey(
         'client.Client',
         on_delete=models.SET_NULL, 
@@ -145,6 +147,8 @@ class TherapySessions(models.Model):
     )
 
     scheduled_time = models.DateTimeField(null=True, blank=True)
+    cancelled_by_therapist = models.BooleanField(default=False)
+    # is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

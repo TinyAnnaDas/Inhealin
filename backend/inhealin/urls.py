@@ -37,10 +37,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user.type == "CLIENT":
             try:
                 client_additional_details = ClientAdditionalDetails.objects.get(client=user)
-                if client_additional_details.subscription is not None:
+                if client_additional_details.subscription_id is not None:
                     token['subscription'] = client_additional_details.subscription.type
                 else:
-                    pass
+                    token['subscription'] = None
             except:
                 pass
 
@@ -72,6 +72,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 from cadmin.views import ProcessOrder, RetriveChat, ListSubscriptionAPI, RetrieveSubscription
 from therapist.views import RetrievePreSignedUrlView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -91,4 +93,4 @@ urlpatterns = [
     path('admin/', include('cadmin.urls')),
 
     path('dj-admin/', admin.site.urls),
-]
+]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

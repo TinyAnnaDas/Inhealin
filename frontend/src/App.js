@@ -37,6 +37,10 @@ import ResumePdf from './Components/TherapistSignup/ResumePdf';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import BookASession from './Pages/BookASession';
+import ListedTherapists from './Pages/Admin/ListedTherapists';
+import TherapistApplications from './Pages/Admin/TherapistApplications';
+import TherapySessions from './Pages/Admin/TherapySessions';
+import TherapySessionComplaints from './Pages/Admin/TherapySessionComplaints';
 
 
 
@@ -97,7 +101,10 @@ function App() {
           <Route path='/admin/dashboard/create-client' element={<CreateClient/>}></Route>
 
 
-          <Route path='/admin/therapist-management' element={<TherapistManagement/>}></Route>
+          <Route path='/admin/listed-therapists' element={<ListedTherapists/>}></Route>
+          <Route path="/admin/therapist-applications" element={<TherapistApplications/>}></Route>
+          <Route path='admin/sessions-details' element={<TherapySessions/>}></Route>
+          <Route path='admin/session-complaints' element={<TherapySessionComplaints/>}></Route>
 
         </Route>
       </Routes>

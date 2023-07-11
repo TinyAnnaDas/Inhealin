@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import   ListTherapistAPI, RUDTherapistAPI, ListClientAPI, RUDClientAPI, LCSubscriptionAPI, RUDSubscriptionAPI
+from .views import   ListTherapistAPI, RUDTherapistAPI, ListClientAPI, RUDClientAPI, LCSubscriptionAPI, RUDSubscriptionAPI, getToken, createMember, GetMember,DeleteMember
 
 
 urlpatterns = [
@@ -14,6 +14,12 @@ urlpatterns = [
 
     path('list-create-subscription-plans/', LCSubscriptionAPI.as_view(), name="all_subscriptions"),
     path('retreive-update-delete-subscription-plans/<int:pk>/', RUDSubscriptionAPI.as_view() ),
+
+    path ('get-token/<int:session_id>/', getToken.as_view()),
+    path('create_member/', createMember.as_view()),
+    path('get_member/<int:uid>/<str:room_name>/', GetMember.as_view()),
+    path('delete_member/<int:uid>/<str:room_name>/<str:name>/', DeleteMember.as_view()),
+    
     
    
    

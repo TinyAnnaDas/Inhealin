@@ -30,22 +30,22 @@ class TherapistAdditionalDetails(models.Model):
         null=True, 
         blank=True
         )
-    age = models.CharField(max_length=10, null=True, blank=True)
-    gender = models.CharField(max_length=10, null=True, blank=True)
-    qualification = models.CharField(max_length=50, null=True, blank=True)
-    experience = models.CharField(max_length=50, null=True, blank=True)
-    hoursPerWeek = models.CharField(max_length=20, null=True, blank=True)
+    age = models.CharField(max_length=100, null=True, blank=True)
+    gender = models.CharField(max_length=255, null=True, blank=True)
+    qualification = models.CharField(max_length=255, null=True, blank=True)
+    experience = models.CharField(max_length=255, null=True, blank=True)
+    hoursPerWeek = models.CharField(max_length=100, null=True, blank=True)
 
-    specialization = ArrayField(models.CharField(max_length=50, null=True, blank=True))
-    technique = ArrayField(models.CharField(max_length=50, null=True, blank=True))
+    specialization = ArrayField(models.CharField(max_length=255, null=True, blank=True))
+    technique = ArrayField(models.CharField(max_length=1000, null=True, blank=True))
 
     describeYourSelf = models.CharField(max_length=1000, null=True, blank=True)
 
-    fluency = ArrayField(models.CharField(max_length=50, null=True, blank=True))
+    fluency = ArrayField(models.CharField(max_length=255, null=True, blank=True))
 
-    chat2to3TimesADay = models.CharField(max_length=10, null=True, blank=True)
-    sessionPreferredTime = models.CharField(max_length=20, null=True, blank=True)
-    resume = models.CharField(max_length=500, null=True, blank=True)
+    chat2to3TimesADay = models.CharField(max_length=100, null=True, blank=True)
+    sessionPreferredTime = models.CharField(max_length=100, null=True, blank=True)
+    resume = models.CharField(max_length=1000, null=True, blank=True)
 
     PENDING = 'pending'
     ON_PROCESS = 'on-process'
@@ -62,6 +62,7 @@ class TherapistAdditionalDetails(models.Model):
 class TherapistAvailability(models.Model):
     therapist = models.ForeignKey('Therapist', on_delete=models.SET_NULL, null=True, blank=True)
     date_time = models.DateTimeField()
+    session_booked = models.BooleanField(default=False)
 
     @property
     def date(self):

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 const WelcomeBlock = () => {
     const client = useSelector(state=>state.clientAuth.client)
     const therapist = useSelector(state=>state.therapistAuth.therapist)
-    console.log(therapist)
+    // console.log(therapist)
 
   return (
     <div>

@@ -54,6 +54,7 @@ export default function OrderSummary() {
 
 //   console.log(subscriptions);
     const client = useSelector(state=>state.clientAuth.client)  
+    console.log(client)
    
 
     const navigate = useNavigate()
@@ -110,23 +111,23 @@ export default function OrderSummary() {
     const access = authTokensClient.access;
 
     
-    // if (client.subscription){
+    if (client.subscription){
 
        
-    //     toast.success("You already have a plan purchased. Please schedule the session. Redirecting to dashboard...", {
-    //         position: "top-center",
-    //         autoClose: 5000,
-    //     })
+        toast.success("You already have a plan purchased. Please schedule the session. Redirecting to dashboard...", {
+            position: "top-center",
+            autoClose: 5000,
+        })
           
-    //     return setTimeout(() => {
-    //          navigate("/client/dashboard");
+        return setTimeout(() => {
+             navigate("/client/dashboard");
       
-    //       }, 5000);
+          }, 5000);
 
-    //     // alert(`Your are already subscribed to plan: ${client.subscription} Navigating to dashbaord...`)
-    //     // return  navigate("/client/dashboard");
+        // alert(`Your are already subscribed to plan: ${client.subscription} Navigating to dashbaord...`)
+        // return  navigate("/client/dashboard");
     
-    // } 
+    } 
    
 
     var options = {

@@ -6,6 +6,9 @@ import TvIcon from '@mui/icons-material/Tv';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import SubscriptionsOutlinedIcon from '@mui/icons-material/SubscriptionsOutlined';
 import DNavbar from '../../Components/Navbar/DNavbar';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
+import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined';
 
 
 
@@ -23,11 +26,33 @@ const ClientManagement = () => {
 
 
   const therapistNavLinksAdmin = [
-
+  
     {
-      text: 'Therapists',
-      path: "/admin/therapist-management",
+      text: 'Applications',
+      path: "/admin/therapist-applications",
+      icon: <DocumentScannerOutlinedIcon/>
+    }, 
+    {
+      text: 'Inhealin Therapists',
+      path: "/admin/listed-therapists",
       icon: <PeopleOutlineIcon/>
+    }, 
+
+  ]
+  
+
+
+  const sessionNavLinksAdmin = [
+  
+    {
+      text: 'Sessions',
+      path: "/admin/sessions-details",
+      icon: <OndemandVideoOutlinedIcon/>
+    }, 
+    {
+      text: 'Complaints',
+      path: "/admin/session-complaints",
+      icon: <FeedbackOutlinedIcon/>
     }, 
 
   ]
@@ -56,7 +81,7 @@ const ClientManagement = () => {
 
   return (
     <div>
-        <Sidebar adminNavLinkHeaders={adminNavLinkHeaders} clientNavLinksAdmin = {clientNavLinksAdmin} therapistNavLinksAdmin = {therapistNavLinksAdmin} adminDashboard={adminDashboard}/>
+        <Sidebar adminNavLinkHeaders={adminNavLinkHeaders} clientNavLinksAdmin = {clientNavLinksAdmin} therapistNavLinksAdmin = {therapistNavLinksAdmin} adminDashboard={adminDashboard} sessionNavLinksAdmin={sessionNavLinksAdmin}/>
 
         <div className="relative md:ml-64 bg-lightBlue-600 Gray-100">
           <DNavbar adminDashboard={adminDashboard}/>

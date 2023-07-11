@@ -39,8 +39,11 @@ class MyAsyncJsonWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         print("Message received from client...", content)
 
-        group = await database_sync_to_async(Group.objects.get)(name=self.group_name)
+        group = await database_sync_to_async(Group.objects.get_or_create)(name=self.group_name)
         print("slgkjspogijs", group)
+        group_id = group[0].id
+        print(group_id)
+        group = await database_sync_to_async(Group.objects.filter(id=group_id).first)()
 
         user = await database_sync_to_async(User.objects.get)(id=self.user_id)
        

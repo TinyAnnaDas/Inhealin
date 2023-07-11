@@ -7,13 +7,21 @@ from rest_framework import permissions, status
 
 from .serializers import  SubsriptionSerializer, CreateSubscriptionSerializer, CreateClientAdditionalDetails, ChatSerializer
 from client.serializers import ClientSerializer
-from therapist.serializers import TherapistSerializer
+from therapist.serializers import TherapistSerializer, TherapistAvailabilitySerializer
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from .models import SubscriptionPlans, Group, Chat
+from therapist.models import TherapistAvailability
+from client.models import ClientAdditionalDetails
 
 from django.db.models import Q
+
+from agora_token_builder import RtcTokenBuilder
+import random
+import time
+
+from .models import RoomMember
 
 
 class ListClientAPI(GenericAPIView, ListModelMixin):
@@ -41,7 +49,7 @@ class RUDClientAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, Destroy
         return self.destroy(request, *args, **kwargs)
 
 
-
+from datetime import datetime
 
 class ListTherapistAPI(GenericAPIView, ListModelMixin):
     permission_classes = [permissions.IsAdminUser] # commenting 
@@ -50,7 +58,28 @@ class ListTherapistAPI(GenericAPIView, ListModelMixin):
     serializer_class = TherapistSerializer
 
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+        all_therapists =  self.list(request, *args, **kwargs)
+
+        for item in all_therapists.data:
+
+            availability = TherapistAvailability.objects.filter(therapist_id=item['id'], session_booked=False, date_time__gte=datetime.now()
+            ).order_by('date_time').first()
+
+            serializer = TherapistAvailabilitySerializer(availability)
+
+            
+
+
+
+            if (availability):
+                print(serializer.data["date_time"])
+        
+                item['next_available'] = serializer.data["date_time"]
+            else:
+                item['next_available'] = None
+
+        return Response(all_therapists.data, status=status.HTTP_200_OK)
+        
 
 
 class RUDTherapistAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
@@ -108,10 +137,17 @@ class RUDSubscriptionAPI(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, D
         return self.destroy(request, *args, **kwargs)
 
 class RetrieveSubscription(GenericAPIView, RetrieveModelMixin):
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = SubscriptionPlans.objects.all()
     serializer_class = SubsriptionSerializer
 
     def get(self, request, *args, **kwargs):
+        # user = request.user
+        # print(user)
+        # additional_details_client = ClientAdditionalDetails.objects.filter(client_id=user.id).first()
+       
+        # already_existing_subscription = additional_details_client.subscription_id
+        # print(already_existing_subscription)
         return self.retrieve(request, *args, **kwargs)
 
 
@@ -194,6 +230,68 @@ class RetriveChat(APIView):
 
         return Response(chats.data, status=status.HTTP_200_OK)
 
+
+
+class getToken(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, session_id):
+        appId = "c0bbf989c6494704a30b03f758f7ffb1"
+        appCertificate = "c7736f9ac606497a9cee8c721c059bfc"
+        print(session_id)
+        channelName = str(session_id)
+        uid = random.randint(1, 230)
+        expirationTimeInSeconds = 3600 * 24 
+        currentTimeStamp = int(time.time())
+        privilegeExpiredTs = currentTimeStamp + expirationTimeInSeconds
+        role = 1
+
+        token = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName,  uid, role, privilegeExpiredTs)
+        print("uid...", uid)
+
+        return Response({"token":token, "uid": uid}, status=status.HTTP_200_OK)
+
+class createMember(APIView):
+
+    def post(self, request):
+
+        print(request.data)
+
+        member, created = RoomMember.objects.get_or_create(
+
+            name = request.data['name'],
+            uid = request.data['uid'],
+            room_name = request.data['room_name']
+
+        )
+
+
+        return Response({'name':request.data['name'], 'uid': request.data['uid']})
+
+class GetMember(APIView):
+
+    def get(self, request, uid, room_name):
+        member = RoomMember.objects.get(
+            uid=uid,
+            room_name=room_name
+        )
+        name = member.name
+
+        return Response({"name": name})
+
+class DeleteMember(APIView):
+    def delete(self, request, uid, room_name, name):
+        
+        print(uid)      
+        print(room_name)
+        print(name)
+        member = RoomMember.objects.filter(
+            name=name,
+            uid=uid,
+            room_name=room_name
+        ).first()
+        member.delete()
+        return Response('Member deleted')
 
 
 

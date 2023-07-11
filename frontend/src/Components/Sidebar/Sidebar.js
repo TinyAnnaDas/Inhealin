@@ -18,8 +18,8 @@ export default function Sidebar(props) {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
 
 
-  const {clientNavLinksAdmin, therapistNavLinksAdmin, adminDashboard, clientDashboard, therapistDashboard, clientNavLinks, therapistNavLinks} = props
-
+  const {clientNavLinksAdmin, therapistNavLinksAdmin, adminDashboard, clientDashboard, therapistDashboard, clientNavLinks, therapistNavLinks, sessionNavLinksAdmin} = props
+  console.log(therapistNavLinksAdmin)
 
   return (
     <div>
@@ -169,6 +169,46 @@ export default function Sidebar(props) {
 
               
               </ul>
+
+
+
+
+
+
+               {/* Divider */}
+               <hr className="my-4 md:min-w-full" />
+              {/* Heading */}
+              <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+                Sessions Management
+              </h6>
+              {/* Navigation */}
+
+              <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+                {sessionNavLinksAdmin.map((link)=> (
+                    <li key={uuidv4()} className="items-center">
+                    <Link
+                      className={
+                        " text-xs uppercase py-3 font-bold flex " +
+                        (window.location.href.indexOf(link.path) !== -1
+                          ? "text-blue-500 hover:text-blue-600"
+                          : "text-gray-700 hover:text-gray-500")
+                      }
+                      to={link.path}
+                    >
+
+                      
+                      {link.icon}{" "}
+                        
+                      <p className="ml-2 pt-1"> {link.text}</p>{" "}
+                      
+                    </Link>
+                    </li>
+                ))}
+                
+
+              
+              </ul>
+
 
 
 

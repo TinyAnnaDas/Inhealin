@@ -25,6 +25,9 @@ const Chats = ({clients, therapists}) => {
   const user = useSelector(state=>state.clientAuth.client)
   const therapist = useSelector(state=>state.therapistAuth.therapist)
 
+  console.log(therapist)
+  console.log(user)
+
 
   const user_id = user&&user.user_id || therapist&&therapist.user_id
 
@@ -53,9 +56,9 @@ const Chats = ({clients, therapists}) => {
 
   useEffect(() => {
     if (groupName) {
-      console.log(groupName);
+      console.log(typeof(groupName));
       
-      axios.get(`${retrieveChat}${groupName}`,{
+      axios.get(`${retrieveChat}${groupName}/`,{
         headers:{"Authorization": `Bearer ${access}`}
       })
       .then((response)=>{
@@ -177,8 +180,8 @@ const Chats = ({clients, therapists}) => {
                 className="h-full w-full"
               />
             </div>
-            <div className="text-sm font-semibold mt-2">Aminos Co.</div>
-            <div className="text-xs text-gray-500">Lead UI/UX Designer</div>
+            <div className="text-sm font-semibold mt-2">{user?.name || therapist?.name}</div>
+            {/* <div className="text-xs text-gray-500">Lead UI/UX Designer</div> */}
             <div className="flex flex-row items-center mt-3">
               <div
                 className="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full"
@@ -193,7 +196,7 @@ const Chats = ({clients, therapists}) => {
               <span className="font-bold">Active Conversations</span>
               <span
                 className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
-                >4</span>
+                >{clients?.length || therapists?.length}</span>
             </div>
             <div className="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
               {clients&&clients.map((client, index)=>{
@@ -205,7 +208,7 @@ const Chats = ({clients, therapists}) => {
                    <div
                      className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full"
                    >
-                     H
+                      {client.name.charAt(0).toUpperCase() } 
                    </div>
                    <div className="ml-2 text-sm font-semibold">{client.name}</div>
                 </button>
@@ -225,7 +228,7 @@ const Chats = ({clients, therapists}) => {
                    <div
                      className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full"
                    >
-                     H
+                     {therapist.name.charAt(0).toUpperCase() } 
                    </div>
                    <div className="ml-2 text-sm font-semibold">{therapist.name}</div>
                 </button>
@@ -286,7 +289,7 @@ const Chats = ({clients, therapists}) => {
                                       <div
                                         className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0"
                                       >
-                                        A
+                                         {user?.name.charAt(0).toUpperCase() || therapist?.name.charAt(0).toUpperCase()} 
                                       </div>
                                       <div
                                         className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl"

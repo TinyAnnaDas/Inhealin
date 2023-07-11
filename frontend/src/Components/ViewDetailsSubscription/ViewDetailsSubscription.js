@@ -50,7 +50,7 @@ const ViewDetailsSubscription = ({openViewDetails, setOpenViewDetails, myPlan}) 
                     <h3 className="mb-4 text-2xl font-semibold text-[#4b7b3f] my-8">Amount Paid</h3>
                  
                     <div className="flex justify-center items-baseline ">
-                        <span className="mr-2 text-5xl font-bold"> &#x20b9;999</span>
+                        <span className="mr-2 text-5xl font-bold"> &#x20b9;{myPlan.price}</span>
                         
                     </div>
             

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axios from "../../Utils/axios"
 import DataTable from 'react-data-table-component'
 import {allTherapists, RetrieveUpdateDeleteTherapist} from "../../Utils/constants"
+import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 
 
 import {useSelector} from 'react-redux'
 import DeleteTherapist from '../TherapistManagement/DeleteTherapist'
 import BlockTheapist from '../TherapistManagement/BlockTheapist'
 
-const TherapistsTable = () => {
+const TherapistApplicationsTable = () => {
 
     const [deleteOpen, setDeleteOpen] = useState(false)
     const [toBeDeleted, setToBeDeleted] = useState("")
@@ -24,10 +25,6 @@ const TherapistsTable = () => {
 
     const [selectedStatus, setSelectedStatus] = useState(false)
 
-    useEffect(()=>{
-        console.log(selectedStatus)
-    },[selectedStatus])
-
     const statusOptions = [
         { value: 'pending', label: 'Pending' },
         { value: 'onreview', label: 'On Review' },
@@ -39,8 +36,7 @@ const TherapistsTable = () => {
       const authTokensAdmin = JSON.parse(localStorage.getItem('authTokensAdmin'))
       const access = authTokensAdmin?.access;
 
-
-    const handleStatusChange = (row, e) => {
+      const handleStatusChange = (row, e) => {
         console.log(e.target.value) 
         
 
@@ -65,6 +61,7 @@ const TherapistsTable = () => {
         })
         .catch((error)=> console.log(error))
     };
+
 
     const getTherapists = async() => {
        
@@ -145,63 +142,56 @@ const TherapistsTable = () => {
         },
         {
             name: "Email Id",
-            selector: row => row.email, 
+            selector: row => <p >{row.email}</p> ,
             width: '220px',
         },
         {
           name: "Phone",
           selector: row => row.phone,
-          width: '150px',
+        //   width: '150px',
         },
         {
-            name: "Next Available",
-            selector: row => row.next_available ? row.next_available : "Not Updated Yet",
-            width: '200px',
+            name: "Applications",
+            selector: row => {
+                return(
+                    <a className='cursor-pointer text-blue-600'>View Details <ArrowRightOutlinedIcon/></a>
+                )
+            },
+            // width: '150px',
         },
-        
-        // {
-        //     name: "Image",
-        //     selector: row => <img width={50} height={50} src={`http://127.0.0.1:8000${row.image}`} alt="user"/>
-        // },
-     
-        {
-            name: "Block",
-            cell: row => <>
-            {row.is_active?
-            <button onClick={()=>{
-                setBlockOpen(true)
-                setToBeBlocked(row)
-                }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:ring-orange-300">
-                Block
-            </button>
-            :
 
-            <button onClick={()=>{
-                setBlockOpen(true)
-                setToBeBlocked(row)
-                }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:ring-orange-300">
-                Unblock
-            </button>
-            }
-            {toBeBlocked && <BlockTheapist blockOpen={blockOpen} setBlockOpen={setBlockOpen} toBeBlocked={toBeBlocked} setTherapstTableUpdated={setTherapstTableUpdated} therapistTableUpdated={therapistTableUpdated} />}
-
-            </>
-        },
-     
         {
-            name: "Delete",
-            cell: row => <>
-                <button  onClick={()=>{
-                    setDeleteOpen(true)
-                    setToBeDeleted(row)
-                    }} type="button" className="px-3 py-2 text-center font-medium text-xs focus:outline-none text-dark rounded-lg bg-red-400 hover:bg-red-500 focus:red-4 focus:ring-red-300">Delete </button>
-                {toBeDeleted&& <DeleteTherapist deleteOpen={deleteOpen} setDeleteOpen={setDeleteOpen} toBeDeleted={toBeDeleted} setTherapstTableUpdated={setTherapstTableUpdated} therapistTableUpdated={therapistTableUpdated}/>}
-                </>
+            name: "Status",
+            selector: row => {
+
+                
+      
+                return(
+            <>
+                <select value={row.status} onChange={(e)=>handleStatusChange(row,e)}>
+                    <option value="">Select status</option>
+                    {statusOptions.map(option => (
+                    <option key={option.value} value={option.value} >
+                        {/* {console.log(row.status)} */}
+                        {option.label}
+                    </option>
+                    ))}
+                </select>
+                </>)}
+
+                
+        },
+   
+      
+
+     
+     
     
-        },
+    
+     
+ 
     
         ]
-    
 
   return (
 
@@ -239,9 +229,8 @@ const TherapistsTable = () => {
      }
     
      />
-
-    
+   
   )
 }
 
-export default TherapistsTable
+export default TherapistApplicationsTable

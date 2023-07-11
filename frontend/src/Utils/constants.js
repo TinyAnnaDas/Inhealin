@@ -11,6 +11,11 @@ export const RetrieveUpdateDeleteTherapist = "admin/retreive-update-delete-thera
 export const ListCreateSubscriptionPlans = "admin/list-create-subscription-plans/"
 export const RetrieveUpdateDeleteSubscriptionPlans = "admin/retreive-update-delete-subscription-plans/"
 
+export const getToken = "admin/get-token/"
+export const createMemberURL = "admin/create_member/"
+export const getMemberURL = "admin/get_member/"
+export const deleteMemberURL = "admin/delete_member/"
+
 
 
 
@@ -40,6 +45,10 @@ export const retrieveTherapistAdditionalDetails = "api/therapist/retrieve-therap
 export const allApprovedTherapists = "api/therapist/all-approved-therapist/"
 export const listCreateTherapistAvailability = "api/therapist/list-create-therapist-availability/"
 export const retrieveTherapistAvailability = "api/therapist/retrieve-therapist-availability/"
+export const retrieveTherapySessionsTherapist = "api/therapist/retrieve-therapy-sessions-therapist/"
+export const cancelTherapySessionTherapist = "api/therapist/cancel-therapy-session-therapist/"
+export const RetrieveUpcomingTherapySessionTherapist = "api/therapist/retrieve-upcoming-therapy-session-therapist/"
+
 
 
 
