@@ -47,9 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'client',
-    'cadmin',
-    'therapist',
+    'client.apps.ClientConfig',
+    'cadmin.apps.CadminConfig',
+    'therapist.apps.TherapistConfig',
 
     'rest_framework',
     "phonenumber_field",
