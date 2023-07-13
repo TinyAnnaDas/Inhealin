@@ -182,12 +182,14 @@ class ProcessOrder(APIView):
         # print(request.data)
         subscription_id = request.data['subscriptionPlanId']
         subscription = SubscriptionPlans.objects.get(id=subscription_id)
+        available_sessions = subscription.sessions_available
         # print(subscription)
         client = request.user
 
         serializer = CreateClientAdditionalDetails(data={
             "client": client.id,
-            "subscription": subscription_id
+            "subscription": subscription_id,
+            "sessions_available":available_sessions
 
         })
 
@@ -279,8 +281,19 @@ class GetMember(APIView):
 
         return Response({"name": name})
 
+from client.models import TherapySessions
 class DeleteMember(APIView):
     def delete(self, request, uid, room_name, name):
+        therapy_session = TherapySessions.objects.filter(id=room_name).first()
+        print(therapy_session)
+        therapy_session.is_completed = True
+        therapy_session.save()
+        client = request.user
+
+        client_additional_details = ClientAdditionalDetails.objects.filter(client_id=client.id).first()
+        print(client_additional_details)
+
+       
         
         print(uid)      
         print(room_name)

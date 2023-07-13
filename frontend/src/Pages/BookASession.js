@@ -127,7 +127,7 @@ const BookASession = () => {
 
 
 
-        if (sessionData){
+        if (sessionData !== "No Session"){
 
           const body = new FormData()
           body.append('therapist', therapistId)

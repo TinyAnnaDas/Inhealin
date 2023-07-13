@@ -26,7 +26,7 @@ export const VideoPlayer = ({ user, client1, therapist, updatedUser }) => {
 
   return (
 
-    <div key={user.id} className='video-container flex flex-grow border border-solid border-blue-500 rounded-md m-2 bg-blue-200 relative' style={{ flexBasis: '500px', maxHeight: '100%', minHeight:'500px' }}>
+    <div key={user.id} className='video-container flex flex-grow border border-solid border-blue-500 rounded-md m-2 bg-blue-200 relative' style={{ flexBasis: '440px', maxHeight: '100%', minHeight:'500px' }}>
         {/* <p>UID - {user.uid}</p> */}
        <div className='username-wrapper ' style={{position:"absolute",  top: "10px", left: '10px',  zIndex: "9999", backgroundColor: "rgba(0,0,0,0.3)", width: "fit-content", padding: "10px",  borderRadius: "5px", color: "#fff", fontSize: "14px"}}><span  className='user-name'>{user.name}</span></div>
         {/* {therapist&&<div className='username-wrapper ' style={{position:"absolute",  top: "10px", left: '10px',  zIndex: "9999", backgroundColor: "rgba(0,0,0,0.3)", width: "fit-content", padding: "10px",  borderRadius: "5px", color: "#fff", fontSize: "14px"}}><span  className='user-name'>{therapist.name}</span></div>} */}

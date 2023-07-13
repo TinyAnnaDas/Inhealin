@@ -31,6 +31,8 @@ export const ListCreateTherapySession = "api/client/list-create-therapy-session/
 export const RetriveTherapySessionTherapist = "api/client/retrieve-therapy-sessions-therapist/"
 export const RetriveTherapySessionClient = "api/client/retrieve-therapy-sessions-client/"
 export const RetrieveUpcomingTherapySessionClient = "api/client/retrieve-upcoming-therapy-session-client/"
+export const RetrieveCompletedTherapySessionClient = "api/client/retrieve-completed-therapy-session-client/"
+
 export const UpdateTherapySession = "api/client/update-therapy-session/"
 export const DeleteTherapySession = "api/client/delete-therapy-session/"
 
@@ -48,6 +50,7 @@ export const retrieveTherapistAvailability = "api/therapist/retrieve-therapist-a
 export const retrieveTherapySessionsTherapist = "api/therapist/retrieve-therapy-sessions-therapist/"
 export const cancelTherapySessionTherapist = "api/therapist/cancel-therapy-session-therapist/"
 export const RetrieveUpcomingTherapySessionTherapist = "api/therapist/retrieve-upcoming-therapy-session-therapist/"
+export const RetrieveCompletedTherapySessionTherapist = "api/therapist/retrieve-completed-therapy-session-therapist/"
 
 
 

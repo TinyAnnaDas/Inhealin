@@ -41,6 +41,8 @@ import ListedTherapists from './Pages/Admin/ListedTherapists';
 import TherapistApplications from './Pages/Admin/TherapistApplications';
 import TherapySessions from './Pages/Admin/TherapySessions';
 import TherapySessionComplaints from './Pages/Admin/TherapySessionComplaints';
+import VideoRoom from './Components/VideoRoom';
+import SessionReview from './Components/SessionReview';
 
 
 
@@ -69,6 +71,7 @@ function App() {
           <Route path='/therapist/dashboard' element={<TherapistDashboard/>}></Route>
           <Route path='/therapist/profile' element={<TherapistProfile/>}></Route>
           <Route path='/therapist/sessions' element={<TherapistSessions/>}></Route>
+          <Route path='/therapist/sessions/:sessionId' element={<VideoRoom/>}/>
           <Route path='/therapist/my-chats' element={<TherapistChats/>}></Route>
           <Route path='/therapist/manage-calendar' element={<TherapistManageCalendar/>}></Route>
           <Route path='/therapist/help-desk' element={<TherapistHelpDesk/>}></Route>
@@ -82,6 +85,9 @@ function App() {
           <Route path='/client/dashboard' element={<Dashboard/>}/>
           <Route path='/client/profile' element={<ClientProfile/>}/>
           <Route path='/client/sessions' element={<ClientSessions/>}/>
+          <Route path='/client/sessions/:sessionId' element={<VideoRoom/>}/>
+          <Route path='/client/sessions/:sessionId/review' element={<SessionReview/>}/>
+         
           <Route path='/client/my-chats' element={<ClientChats/>}/>
           <Route path='/client/mood-journal' element={<MoodJournal/>}/>
           <Route path='/client/help-desk' element={<HelpDesk/>}/>

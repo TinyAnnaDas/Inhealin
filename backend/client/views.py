@@ -20,7 +20,7 @@ class RetrieveUpcomingSubscriptionClient(APIView):
      permission_classes = [permissions.IsAuthenticated]
      def get(self, request):
         user = request.user
-        upcoming_therapy_session = TherapySessions.objects.filter(client=user.id).last()
+        upcoming_therapy_session = TherapySessions.objects.filter(client=user.id, is_completed=False).last()
         if upcoming_therapy_session:
             session_serializer = TherapySessionsSerializer(upcoming_therapy_session)
             therapist = upcoming_therapy_session.therapist
@@ -31,10 +31,33 @@ class RetrieveUpcomingSubscriptionClient(APIView):
                 'therapist': therapist_serializer.data
             }
         else:
-            return Response("Message : No Session", status=status.HTTP_200_OK)
+            return Response({"session" : "No Session"}, status=status.HTTP_200_OK)
       
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class RetrieveCompletedSubscriptionClient(GenericAPIView, ListModelMixin ):
+     permission_classes = [permissions.IsAuthenticated]
+     serializer_class = TherapySessionsSerializer
+
+     def get_queryset(self):
+        queryset = TherapySessions.objects.filter(client=self.request.user.id, is_completed=True)
+        return queryset
+
+     def get(self, request, *args, **kwargs):
+        all_completed_sessions =  self.list(request, *args, **kwargs)
+
+        for item in all_completed_sessions.data:
+            print(item)
+            therapist = Therapist.objects.filter(id=item['therapist']).first()
+            print(therapist.name)
+            # serializer = TherapistSerializer(therapist)
+            item["therapist_name"] = therapist.name
+
+        
+        return Response(all_completed_sessions.data)
+
 
 
 
@@ -161,13 +184,13 @@ class RetrieveSubscriptionDetails(APIView):
     def get(self, request):
         client = request.user
 
-        try:
-            client_additional_details = ClientAdditionalDetails.objects.get(client=client)
-        except:
-            return Response("", status=status.HTTP_200_OK)
+        
+        client_additional_details = ClientAdditionalDetails.objects.filter(client=client).first()
+       
         
         if client_additional_details.subscription is not None:
             subscription = client_additional_details.subscription
+            sessions_available = client_additional_details.sessions_available
             print(subscription)
         else:
             return Response("", status=status.HTTP_200_OK)
@@ -176,9 +199,11 @@ class RetrieveSubscriptionDetails(APIView):
         serializer = SubsriptionSerializer(subscription)
 
         serialized_data = serializer.data
-        # print(serialized_data)
 
-        return Response(serialized_data, status=status.HTTP_200_OK)
+        
+        data = {"subscription_plan": serialized_data, "sessions_available":sessions_available}
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class MoodJoural(APIView):

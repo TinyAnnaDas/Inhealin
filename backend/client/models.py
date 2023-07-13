@@ -98,6 +98,7 @@ class Client(User):
 class ClientAdditionalDetails(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     subscription = models.ForeignKey(SubscriptionPlans, on_delete=models.SET_NULL, null=True, blank=True)
+    sessions_available=models.IntegerField(null=True, blank=True)
 
 
 
@@ -148,7 +149,7 @@ class TherapySessions(models.Model):
 
     scheduled_time = models.DateTimeField(null=True, blank=True)
     cancelled_by_therapist = models.BooleanField(default=False)
-    # is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

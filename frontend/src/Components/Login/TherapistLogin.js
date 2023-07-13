@@ -71,7 +71,7 @@ const TherapistLogin = () => {
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#9bd58b] sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#9bd58b] sm:text-sm sm:leading-6 focus:outline-none p-2"
                     />
                 </div>
                 </div>
@@ -94,7 +94,7 @@ const TherapistLogin = () => {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#9bd58b] sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#9bd58b] sm:text-sm sm:leading-6 focus:outline-none p-2"
                     />
                 </div>
                 </div>
@@ -110,7 +110,7 @@ const TherapistLogin = () => {
             </form>
             <p className="mt-10 text-center text-sm text-gray-500">
                     Not a member? 
-                    <button className="font-semibold leading-6 text-[#4b7b3f] hover:text-[#325343] cursor-pointer"> Sign up</button>
+                    <button className=" font-semibold leading-6 text-[#4b7b3f] hover:text-[#325343] cursor-pointer ml-1"> Sign up</button>
             </p>
 
             </div>

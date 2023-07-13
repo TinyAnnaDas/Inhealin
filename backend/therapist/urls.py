@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import RetrievePreSignedUrlView, RegisterTherapistView, ListTherapistAdditionalDetailsAPI, RetrieveTheapistAdditionalDetailsAPI,ListAllApprovedTherapists, LCTherapistAvailability, RetrieveTherapistAvailability, RetrieveTherapySessionsTherapistAPI, CancelTherapySessionTherapist, RetrieveUpcomingSubscriptionTherapist
+from .views import RetrievePreSignedUrlView, RegisterTherapistView, ListTherapistAdditionalDetailsAPI, RetrieveTheapistAdditionalDetailsAPI,ListAllApprovedTherapists, LCTherapistAvailability, RetrieveTherapistAvailability, RetrieveTherapySessionsTherapistAPI, CancelTherapySessionTherapist, RetrieveUpcomingSubscriptionTherapist, RetrieveCompletedSubscriptionTherapist
 
 urlpatterns = [
      path('pre-signed-url/', RetrievePreSignedUrlView.as_view()),
@@ -13,6 +13,7 @@ urlpatterns = [
      path('retrieve-therapy-sessions-therapist/', RetrieveTherapySessionsTherapistAPI.as_view()),
      path('cancel-therapy-session-therapist/<int:pk>/', CancelTherapySessionTherapist.as_view()), 
      path('retrieve-upcoming-therapy-session-therapist/', RetrieveUpcomingSubscriptionTherapist.as_view() ),
+     path('retrieve-completed-therapy-session-therapist/', RetrieveCompletedSubscriptionTherapist.as_view() ),
 
      
 

@@ -19,7 +19,8 @@ class RetrieveUpcomingSubscriptionTherapist(APIView):
      permission_classes = [permissions.IsAuthenticated]
      def get(self, request):
         therapist = request.user
-        upcoming_therapy_session = TherapySessions.objects.filter(therapist=therapist.id).last()
+        print(therapist.name)
+        upcoming_therapy_session = TherapySessions.objects.filter(therapist=therapist.id, is_completed=False).first()
         if upcoming_therapy_session:
             session_serializer = TherapySessionsSerializer(upcoming_therapy_session)
             client = upcoming_therapy_session.client
@@ -30,10 +31,34 @@ class RetrieveUpcomingSubscriptionTherapist(APIView):
                 'therapist': client_serializer.data
             }
         else:
-            return Response("Message : No Session", status=status.HTTP_200_OK)
+            return Response({"session" : "No Session"}, status=status.HTTP_200_OK)
       
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class RetrieveCompletedSubscriptionTherapist(GenericAPIView, ListModelMixin ):
+     permission_classes = [permissions.IsAuthenticated]
+     serializer_class = TherapySessionsSerializer
+
+     def get_queryset(self):
+        queryset = TherapySessions.objects.filter(therapist=self.request.user.id, is_completed=True)
+        return queryset
+
+     def get(self, request, *args, **kwargs):
+        all_completed_sessions =  self.list(request, *args, **kwargs)
+
+        for item in all_completed_sessions.data:
+            print(item)
+            client = Client.objects.filter(id=item['client']).first()
+            print(client.name)
+            # serializer = TherapistSerializer(therapist)
+            item["therapist_name"] = client.name
+
+        
+        return Response(all_completed_sessions.data)
+
+
 
 
 
@@ -53,7 +78,7 @@ class RetrieveTherapySessionsTherapistAPI(GenericAPIView, ListModelMixin):
     def get_queryset(self):
         therapist_id = self.request.user.id
         print(therapist_id)
-        queryset = TherapySessions.objects.filter(therapist=therapist_id, cancelled_by_therapist=False)
+        queryset = TherapySessions.objects.filter(therapist=therapist_id, cancelled_by_therapist=False, is_completed=False)
         return queryset
 
     def get(self, request, *args, **kwargs):
